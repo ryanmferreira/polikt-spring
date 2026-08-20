@@ -1,6 +1,6 @@
 # Polikt REST API
 
-REST API for **Polikt** — a platform for news, guides and courses — built with **Spring Boot**.
+REST API for **Polikt** - a platform for news, guides and courses - built with **Spring Boot**.
 
 ## Technologies
 
@@ -36,7 +36,7 @@ spring.jpa.show-sql=true
 
 ## Database
 
-SQL scripts are available in `api/sql/`:
+SQL scripts are available in `SQL/`:
 
 | File | Description |
 |---|---|
@@ -70,7 +70,7 @@ The API will be available at `http://localhost:8080`.
 | `GET` | `/users` | Lists all users |
 | `POST` | `/users` | Creates a new user |
 
-#### Example — Create user
+#### Example - Create user
 
 ```bash
 curl -X POST http://localhost:8080/users \
@@ -83,7 +83,7 @@ curl -X POST http://localhost:8080/users \
   }'
 ```
 
-#### Example — List users
+#### Example - List users
 
 ```bash
 curl http://localhost:8080/users
@@ -91,26 +91,45 @@ curl http://localhost:8080/users
 
 ## Testing with Bruno
 
-Test requests are in `api/PoliktRequisitions/` (Bruno collection):
+Test requests are in `HTTPRequisitions/` (Bruno collection):
 
-- `Users/Get users.yml` — `GET /users`
-- `Users/Add user.yml` — `POST /users`
+- `Users/Get users.yml` - `GET /users`
+- `Users/Add user.yml` - `POST /users`
 
 ## Project Structure
 
 ```
-api/
-├── PoliktRequisitions/     # Bruno request collection
-├── sql/                    # SQL scripts
-├── src/
-│   ├── main/
-│   │   ├── java/com/polikt/api/
-│   │   │   ├── ApiApplication.java
-│   │   │   └── user/
-│   │   │       ├── UserControllers.java
-│   │   │       ├── UserEntity.java
-│   │   │       └── UserRepository.java
-│   │   └── resources/
-│   │       └── application.properties
-│   └── test/
-└── pom.xml
+.
+├── api/
+│   ├── .gitattributes
+│   ├── .gitignore
+│   ├── .mvn/
+│   ├── mvnw
+│   ├── mvnw.cmd
+│   ├── pom.xml
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/com/polikt/api/
+│   │   │   │   ├── ApiApplication.java
+│   │   │   │   └── user/
+│   │   │   │       ├── UserControllers.java
+│   │   │   │       ├── UserEntity.java
+│   │   │   │       └── UserRepository.java
+│   │   │   └── resources/
+│   │   │       └── application.properties
+│   │   └── test/
+│   │       └── java/com/polikt/api/
+│   │           └── ApiApplicationTests.java
+│   └── target/
+├── HTTPRequisitions/          # Bruno request collection
+│   ├── opencollection.yml
+│   └── Users/
+│       ├── Add user.yml
+│       ├── folder.yml
+│       └── Get users.yml
+└── SQL/                       # Some SQL scripts
+    ├── create_tables.sql
+    ├── delete_tables.sql
+    ├── drop_database.sql
+    ├── inserts.sql
+    └── select.sql
