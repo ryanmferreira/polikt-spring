@@ -10,7 +10,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "users")
-public class UserEntity {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,10 +28,10 @@ public class UserEntity {
     @Column(nullable = false)
     private String password;
 
-    public UserEntity() {
+    public User() {
     }
 
-    public UserEntity(String name, String email, String phone) {
+    public User(String name, String email, String phone) {
         this.name = name;
         this.email = email;
         this.phone = phone;

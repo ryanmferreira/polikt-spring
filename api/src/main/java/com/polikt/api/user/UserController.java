@@ -6,21 +6,21 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
-public class UserControllers {
+public class UserController {
 
     private final UserRepository repository;
 
-    public UserControllers(UserRepository repository) {
+    public UserController(UserRepository repository) {
         this.repository = repository;
     }
 
     @GetMapping
-    public List<UserEntity> getAllUsers() {
+    public List<User> getAllUsers() {
         return repository.findAll();
     }
 
     @PostMapping
-    public UserEntity createUser(@RequestBody UserEntity user) {
+    public User createUser(@RequestBody User user) {
         return repository.save(user);
     }
 }
