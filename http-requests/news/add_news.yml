@@ -1,0 +1,28 @@
+info:
+  name: Add News
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: http://localhost:8080/news
+  body:
+    type: json
+    data: |-
+      {
+        "title": "Lorem ipsum dolor sit amet",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "content": "fdsfdsl",
+        "coverImage": "https://www.extremetech.com/computing/128247-getting-started-with-linux-commands",
+        "upvotes": 0,
+        "user": {
+          "id": 6
+        }
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
