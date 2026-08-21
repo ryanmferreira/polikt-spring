@@ -1,0 +1,26 @@
+info:
+  name: Add Guide
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: http://localhost:8080/guides
+  body:
+    type: json
+    data: |-
+      {
+        "title": "Guia de Sobrevivência para Iniciantes",
+        "description": "Aprenda os primeiros passos sem passar sufoco",
+        "content": "Conteúdo detalhado do guia aqui...",
+        "user": {
+          "id": 1
+        }
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

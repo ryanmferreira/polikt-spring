@@ -100,36 +100,101 @@ Test requests are in `HTTPRequisitions/` (Bruno collection):
 
 ```
 .
-├── api/
-│   ├── .gitattributes
-│   ├── .gitignore
-│   ├── .mvn/
-│   ├── mvnw
-│   ├── mvnw.cmd
-│   ├── pom.xml
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/com/polikt/api/
-│   │   │   │   ├── ApiApplication.java
-│   │   │   │   └── user/
-│   │   │   │       ├── UserControllers.java
-│   │   │   │       ├── UserEntity.java
-│   │   │   │       └── UserRepository.java
-│   │   │   └── resources/
-│   │   │       └── application.properties
-│   │   └── test/
-│   │       └── java/com/polikt/api/
-│   │           └── ApiApplicationTests.java
-│   └── target/
-├── HTTPRequisitions/          # Bruno request collection
-│   ├── opencollection.yml
-│   └── Users/
-│       ├── Add user.yml
-│       ├── folder.yml
-│       └── Get users.yml
-└── SQL/                       # Some SQL scripts
+├── api
+│   ├── mvnw
+│   ├── mvnw.cmd
+│   ├── pom.xml
+│   ├── src
+│   │   ├── main
+│   │   │   ├── java
+│   │   │   │   └── com
+│   │   │   │       └── polikt
+│   │   │   │           └── api
+│   │   │   │               ├── ApiApplication.java
+│   │   │   │               ├── guide
+│   │   │   │               │   ├── GuideController.java
+│   │   │   │               │   ├── Guide.java
+│   │   │   │               │   └── GuideRepository.java
+│   │   │   │               ├── news
+│   │   │   │               │   ├── NewsController.java
+│   │   │   │               │   ├── News.java
+│   │   │   │               │   └── NewsRepository.java
+│   │   │   │               └── user
+│   │   │   │                   ├── UserController.java
+│   │   │   │                   ├── User.java
+│   │   │   │                   └── UserRepository.java
+│   │   │   └── resources
+│   │   │       └── application.properties
+│   │   └── test
+│   │       └── java
+│   │           └── com
+│   │               └── polikt
+│   │                   └── api
+│   │                       └── ApiApplicationTests.java
+│   └── target
+│       ├── classes
+│       │   ├── application.properties
+│       │   └── com
+│       │       └── polikt
+│       │           └── api
+│       │               ├── ApiApplication.class
+│       │               ├── guide
+│       │               │   ├── Guide.class
+│       │               │   ├── GuideController.class
+│       │               │   └── GuideRepository.class
+│       │               ├── news
+│       │               │   ├── News.class
+│       │               │   ├── NewsController.class
+│       │               │   └── NewsRepository.class
+│       │               └── user
+│       │                   ├── User.class
+│       │                   ├── UserController.class
+│       │                   └── UserRepository.class
+│       ├── generated-sources
+│       │   └── annotations
+│       ├── generated-test-sources
+│       │   └── test-annotations
+│       ├── maven-status
+│       │   └── maven-compiler-plugin
+│       │       ├── compile
+│       │       │   └── default-compile
+│       │       │       ├── createdFiles.lst
+│       │       │       └── inputFiles.lst
+│       │       └── testCompile
+│       │           └── default-testCompile
+│       │               ├── createdFiles.lst
+│       │               └── inputFiles.lst
+│       └── test-classes
+│           └── com
+│               └── polikt
+│                   └── api
+│                       └── ApiApplicationTests.class
+├── http-requests
+│   ├── Guides
+│   │   ├── add_guide.yml
+│   │   ├── delete_guide_by_id.yml
+│   │   ├── folder.yml
+│   │   ├── get_guide_by_id.yml
+│   │   └── get_guides.yml
+│   ├── news
+│   │   ├── add_news.yml
+│   │   ├── delete_news_by_id.yml
+│   │   ├── folder.yml
+│   │   ├── get_news_by_id.yml
+│   │   └── get_news.yml
+│   ├── opencollection.yml
+│   └── users
+│       ├── add_user_by_id.yml
+│       ├── add_user.yml
+│       ├── delete_user_by_id.yml
+│       ├── folder.yml
+│       └── get_users.yml
+├── LICENSE
+├── README.md
+└── sql-schemes
     ├── create_tables.sql
     ├── delete_tables.sql
     ├── drop_database.sql
     ├── inserts.sql
     └── select.sql
+```

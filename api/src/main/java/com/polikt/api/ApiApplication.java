@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @SpringBootApplication
 @RestController
 public class ApiApplication {
+
 	@GetMapping("/")
 	String index() {
 		return "<h1 style='color: purple'>Welcome to Polikt API!</h1>";

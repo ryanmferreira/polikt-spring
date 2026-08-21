@@ -1,21 +1,22 @@
-
 package com.polikt.api.user;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
-import jakarta.persistence.CascadeType;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "users")
 public class User {
+
+    // Values
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,12 +31,14 @@ public class User {
     @Column(unique = true)
     private String phone;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(nullable = false)
     private String password;
 
-    // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch =
-    // FetchType.LAZY)
-    // private List<News> news;
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    // Constructors
 
     public User() {
     }
@@ -45,6 +48,8 @@ public class User {
         this.email = email;
         this.phone = phone;
     }
+
+    // Getters and Setters
 
     public int getId() {
         return this.id;
@@ -80,5 +85,9 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return this.createdAt;
     }
 }

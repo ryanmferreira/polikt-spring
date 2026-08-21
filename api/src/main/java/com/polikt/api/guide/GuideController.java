@@ -1,4 +1,4 @@
-package com.polikt.api.news;
+package com.polikt.api.guide;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,44 +12,38 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 
 @RestController
-@RequestMapping("/news")
-public class NewsController {
+@RequestMapping("/guides")
+public class GuideController {
 
-    // Inject the repository
-    private final NewsRepository repository;
+    private final GuideRepository repository;
 
-    // Constructor
-    public NewsController(NewsRepository repository) {
+    public GuideController(GuideRepository repository) {
         this.repository = repository;
     }
 
-    // GET /news
     @GetMapping
-    public List<News> getAllNews() {
+    public List<Guide> getAllGuides() {
         return repository.findAll();
     }
 
-    // GET /news/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<News> getNewsById(@PathVariable int id) {
-        News news = repository.findById(id).orElse(null);
+    public ResponseEntity<Guide> getGuideById(@PathVariable int id) {
+        Guide guide = repository.findById(id).orElse(null);
 
-        if (news != null) {
-            return ResponseEntity.ok(news);
+        if (guide != null) {
+            return ResponseEntity.ok(guide);
         }
 
         return ResponseEntity.notFound().build();
     }
 
-    // POST /news
     @PostMapping
-    public News createNews(@RequestBody News news) {
-        return repository.save(news);
+    public Guide createGuide(@RequestBody Guide guide) {
+        return repository.save(guide);
     }
 
-    // DELETE /news/{id}
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteNewsById(@PathVariable int id) {
+    public ResponseEntity<Void> deleteGuideById(@PathVariable int id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }

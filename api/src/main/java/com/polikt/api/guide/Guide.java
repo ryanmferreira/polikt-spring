@@ -1,8 +1,7 @@
-package com.polikt.api.news;
+package com.polikt.api.guide;
 
 import java.time.LocalDateTime;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.polikt.api.user.User;
 
 import jakarta.persistence.Column;
@@ -16,10 +15,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "news")
-public class News {
-
-    // Values
+@Table(name = "guides")
+public class Guide {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,14 +28,8 @@ public class News {
     @Column
     private String description;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String content;
-
-    @Column(name = "cover_image")
-    private String coverImage;
-
     @Column(nullable = false)
-    private int upvotes = 0;
+    private String content;
 
     @JoinColumn(name = "user_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -47,20 +38,14 @@ public class News {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    // Constructors
-
-    public News() {
+    public Guide() {
     }
 
-    public News(String title, String description, String content, String coverImage, User user) {
+    public Guide(String title, String description, String content) {
         this.title = title;
         this.description = description;
         this.content = content;
-        this.coverImage = coverImage;
-        this.user = user;
     }
-
-    // Getters and Setters
 
     public int getId() {
         return this.id;
@@ -88,22 +73,6 @@ public class News {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public String getCoverImage() {
-        return this.coverImage;
-    }
-
-    public void setCoverImage(String coverImage) {
-        this.coverImage = coverImage;
-    }
-
-    public int getUpvotes() {
-        return this.upvotes;
-    }
-
-    public void setUpvotes(int upvotes) {
-        this.upvotes = upvotes;
     }
 
     public User getUser() {

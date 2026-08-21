@@ -1,5 +1,5 @@
 info:
-  name: Add News
+  name: Add news
   type: http
   seq: 1
 
@@ -11,12 +11,12 @@ http:
     data: |-
       {
         "title": "Lorem ipsum dolor sit amet",
-        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        "content": "fdsfdsl",
+        "description": "Lorem ipsum dolor sit amet.",
+        "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         "coverImage": "https://www.extremetech.com/computing/128247-getting-started-with-linux-commands",
         "upvotes": 0,
         "user": {
-          "id": 6
+          "id": 1
         }
       }
   auth: inherit
