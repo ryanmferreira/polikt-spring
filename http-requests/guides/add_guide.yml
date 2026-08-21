@@ -10,12 +10,12 @@ http:
     type: json
     data: |-
       {
-        "title": "Guia de Sobrevivência para Iniciantes",
-        "description": "Aprenda os primeiros passos sem passar sufoco",
-        "content": "Conteúdo detalhado do guia aqui...",
-        "user": {
-          "id": 1
-        }
+        "title": "Como denunciar buracos na rua",
+        "description": "Passo a passo para registrar a reclamacao",
+        "content": "Conteudo completo do guia aqui.",
+        "coverImage": 0,
+        "user": { "id": 1 },
+        "agency": { "id": 1 }
       }
   auth: inherit
 

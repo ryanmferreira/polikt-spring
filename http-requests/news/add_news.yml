@@ -10,14 +10,12 @@ http:
     type: json
     data: |-
       {
-        "title": "Lorem ipsum dolor sit amet",
-        "description": "Lorem ipsum dolor sit amet.",
-        "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        "coverImage": "https://www.extremetech.com/computing/128247-getting-started-with-linux-commands",
-        "upvotes": 0,
-        "user": {
-          "id": 1
-        }
+        "title": "Camara aprova novo projeto de lei sobre transparencia",
+        "description": "Proposta busca ampliar acesso a dados publicos",
+        "content": "Texto completo da noticia aqui.",
+        "summary": "Resumo curto da noticia.",
+        "coverImage": "https://example.com/images/capa.jpg",
+        "user": { "id": 1 }
       }
   auth: inherit
 

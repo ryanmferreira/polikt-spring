@@ -34,6 +34,9 @@ public class News {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String summary;
+
     @Column(name = "cover_image")
     private String coverImage;
 
@@ -42,6 +45,7 @@ public class News {
 
     @JoinColumn(name = "user_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     private User user;
 
     @Column(name = "created_at", updatable = false)
@@ -88,6 +92,14 @@ public class News {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getSummary() {
+        return this.summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 
     public String getCoverImage() {

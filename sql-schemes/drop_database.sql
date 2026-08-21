@@ -1,4 +1,3 @@
 DROP DATABASE IF EXISTS polikt_db;
 
-
 CREATE DATABASE polikt_db;

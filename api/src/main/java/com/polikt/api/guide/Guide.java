@@ -2,6 +2,7 @@ package com.polikt.api.guide;
 
 import java.time.LocalDateTime;
 
+import com.polikt.api.agency.Agency;
 import com.polikt.api.user.User;
 
 import jakarta.persistence.Column;
@@ -31,9 +32,16 @@ public class Guide {
     @Column(nullable = false)
     private String content;
 
+    @Column(name = "cover_image")
+    private String coverImage;
+
     @JoinColumn(name = "user_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User user;
+
+    @JoinColumn(name = "agency_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private Agency agency;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -75,6 +83,14 @@ public class Guide {
         this.content = content;
     }
 
+    public String getCoverImage() {
+        return this.coverImage;
+    }
+
+    public void setCoverImage(String coverImage) {
+        this.coverImage = coverImage;
+    }
+
     public User getUser() {
         return this.user;
     }
@@ -85,5 +101,13 @@ public class Guide {
 
     public LocalDateTime getCreatedAt() {
         return this.createdAt;
+    }
+
+    public Agency getAgency() {
+        return this.agency;
+    }
+
+    public void setAgency(Agency agency) {
+        this.agency = agency;
     }
 }
