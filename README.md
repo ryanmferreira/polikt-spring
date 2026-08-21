@@ -1,6 +1,6 @@
 # Polikt REST API
 
-REST API for **Polikt** - a platform for news, guides and courses - built with **Spring Boot**.
+REST API for **Polikt** - a platform for news, guides and agencies - built with **Spring Boot**.
 
 ## Technologies
 
@@ -34,18 +34,6 @@ spring.jpa.show-sql=true
 
 > `ddl-auto=update` creates/updates tables automatically from the JPA entities.
 
-## Database
-
-SQL scripts are available in `SQL/`:
-
-| File | Description |
-|---|---|
-| `create_tables.sql` | Creates tables (users, tag, agency, news, guide, course, etc.) |
-| `inserts.sql` | Sample data |
-| `select.sql` | Sample queries |
-| `delete_tables.sql` | Drops tables |
-| `drop_database.sql` | Drops the database |
-
 ## Running
 
 ```bash
@@ -57,20 +45,24 @@ The API will be available at `http://localhost:8080`.
 
 ## Endpoints
 
+All endpoints return JSON except `GET /`, which returns the welcome HTML. The API does not currently expose update endpoints.
+
 ### Root
 
 | Method | Route | Description |
 |---|---|---|
-| `GET` | `/` | Welcome message |
+| `GET` | `/` | Returns the API welcome message |
 
 ### Users
 
 | Method | Route | Description |
 |---|---|---|
 | `GET` | `/users` | Lists all users |
-| `POST` | `/users` | Creates a new user |
+| `GET` | `/users/{id}` | Gets one user by ID |
+| `POST` | `/users` | Creates a user |
+| `DELETE` | `/users/{id}` | Deletes a user by ID |
 
-#### Example - Create user
+User creation accepts `name`, `email`, `password` and the optional `phone`. The response includes `id`, `name`, `email`, `phone` and `createdAt`; `password` is write-only and is not returned.
 
 ```bash
 curl -X POST http://localhost:8080/users \
@@ -83,18 +75,100 @@ curl -X POST http://localhost:8080/users \
   }'
 ```
 
-#### Example - List users
+### Agencies
+
+| Method | Route | Description |
+|---|---|---|
+| `GET` | `/agencies` | Lists all agencies |
+| `GET` | `/agencies/{id}` | Gets one agency by ID |
+| `POST` | `/agencies` | Creates an agency |
+| `DELETE` | `/agencies/{id}` | Deletes an agency by ID |
+
+Agency creation accepts the required fields `name` and `contact`.
 
 ```bash
-curl http://localhost:8080/users
+curl -X POST http://localhost:8080/agencies \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Prefeitura Municipal",
+    "contact": "exemplo@prefeitura.gov.br"
+  }'
 ```
+
+### News
+
+| Method | Route | Description |
+|---|---|---|
+| `GET` | `/news` | Lists all news |
+| `GET` | `/news/{id}` | Gets one news item by ID |
+| `POST` | `/news` | Creates a news item |
+| `DELETE` | `/news/{id}` | Deletes a news item by ID |
+
+News creation accepts the required fields `title`, `content`, `summary` and `user`, plus the optional fields `description` and `coverImage`. The `user` relation can be sent as an object containing its `id`. New items start with `upvotes` set to `0`.
+
+```bash
+curl -X POST http://localhost:8080/news \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Camara aprova novo projeto de lei sobre transparencia",
+    "description": "Proposta busca ampliar acesso a dados publicos",
+    "content": "Texto completo da noticia aqui.",
+    "summary": "Resumo curto da noticia.",
+│       │                   ├── agency
+│       │                   │   ├── Agency.class
+│       │                   │   ├── AgencyController.class
+│       │                   │   └── AgencyRepository.class
+    "coverImage": "https://example.com/images/capa.jpg",
+    "user": { "id": 1 }
+  }'
+```
+
+### Guides
+
+| Method | Route | Description |
+|---|---|---|
+| `GET` | `/guides` | Lists all guides |
+| `GET` | `/guides/{id}` | Gets one guide by ID |
+| `POST` | `/guides` | Creates a guide |
+| `DELETE` | `/guides/{id}` | Deletes a guide by ID |
+
+Guide creation accepts the required fields `title`, `content`, `user` and `agency`, plus the optional fields `description` and `coverImage`. Both relations can be sent as objects containing their IDs.
+
+```bash
+curl -X POST http://localhost:8080/guides \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Como denunciar buracos na rua",
+    "description": "Passo a passo para registrar a reclamacao",
+    "content": "Conteudo completo do guia aqui.",
+    "coverImage": "https://example.com/images/capa.jpg",
+    "user": { "id": 1 },
+    "agency": { "id": 1 }
+  }'
+```
+
+For the `GET /{id}` and `DELETE /{id}` endpoints, a missing resource returns `404 Not Found`. Successful deletion returns `204 No Content`.
 
 ## Testing with Bruno
 
-Test requests are in `HTTPRequisitions/` (Bruno collection):
+The Bruno collection is available in `http-requests/`:
 
-- `Users/Get users.yml` - `GET /users`
-- `Users/Add user.yml` - `POST /users`
+- `http-requests/users/get_users.yml` - `GET /users`
+- `http-requests/users/add_user.yml` - `POST /users`
+- `http-requests/users/add_user_by_id.yml` - `GET /users/{id}`
+- `http-requests/users/delete_user_by_id.yml` - `DELETE /users/{id}`
+- `http-requests/agencies/get_agencies.yml` - `GET /agencies`
+- `http-requests/agencies/get_agency_by_id.yml` - `GET /agencies/{id}`
+- `http-requests/agencies/add_agency.yml` - `POST /agencies`
+- `http-requests/agencies/delete_agency_by_id.yml` - `DELETE /agencies/{id}`
+- `http-requests/news/get_news.yml` - `GET /news`
+- `http-requests/news/get_news_by_id.yml` - `GET /news/{id}`
+- `http-requests/news/add_news.yml` - `POST /news`
+- `http-requests/news/delete_news_by_id.yml` - `DELETE /news/{id}`
+- `http-requests/guides/get_guides.yml` - `GET /guides`
+- `http-requests/guides/get_guide_by_id.yml` - `GET /guides/{id}`
+- `http-requests/guides/add_guide.yml` - `POST /guides`
+- `http-requests/guides/delete_guide_by_id.yml` - `DELETE /guides/{id}`
 
 ## Project Structure
 
@@ -111,6 +185,10 @@ Test requests are in `HTTPRequisitions/` (Bruno collection):
 │   │   │   │       └── polikt
 │   │   │   │           └── api
 │   │   │   │               ├── ApiApplication.java
+│   │   │   │               ├── agency
+│   │   │   │               │   ├── AgencyController.java
+│   │   │   │               │   ├── Agency.java
+│   │   │   │               │   └── AgencyRepository.java
 │   │   │   │               ├── guide
 │   │   │   │               │   ├── GuideController.java
 │   │   │   │               │   ├── Guide.java
@@ -138,6 +216,10 @@ Test requests are in `HTTPRequisitions/` (Bruno collection):
 │       │       └── polikt
 │       │           └── api
 │       │               ├── ApiApplication.class
+│       │               ├── agency
+│       │               │   ├── Agency.class
+│       │               │   ├── AgencyController.class
+│       │               │   └── AgencyRepository.class
 │       │               ├── guide
 │       │               │   ├── Guide.class
 │       │               │   ├── GuideController.class
@@ -170,7 +252,7 @@ Test requests are in `HTTPRequisitions/` (Bruno collection):
 │                   └── api
 │                       └── ApiApplicationTests.class
 ├── http-requests
-│   ├── Guides
+│   ├── guides
 │   │   ├── add_guide.yml
 │   │   ├── delete_guide_by_id.yml
 │   │   ├── folder.yml
