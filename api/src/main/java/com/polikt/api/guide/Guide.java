@@ -2,6 +2,7 @@ package com.polikt.api.guide;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.polikt.api.agency.Agency;
 import com.polikt.api.user.User;
 
@@ -21,7 +22,7 @@ public class Guide {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @Column(nullable = false)
     private String title;
@@ -37,10 +38,12 @@ public class Guide {
 
     @JoinColumn(name = "user_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     private User user;
 
     @JoinColumn(name = "agency_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     private Agency agency;
 
     @Column(name = "created_at", updatable = false)
@@ -55,7 +58,7 @@ public class Guide {
         this.content = content;
     }
 
-    public int getId() {
+    public Long getId() {
         return this.id;
     }
 

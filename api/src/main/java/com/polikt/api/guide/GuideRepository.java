@@ -2,5 +2,5 @@ package com.polikt.api.guide;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface GuideRepository extends JpaRepository<Guide, Integer> {
+public interface GuideRepository extends JpaRepository<Guide, Long> {
 }

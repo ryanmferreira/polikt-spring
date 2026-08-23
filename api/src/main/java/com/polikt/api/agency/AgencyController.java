@@ -29,7 +29,7 @@ public class AgencyController {
 
     // GET /agencies/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<Agency> getAgencyById(@PathVariable int id) {
+    public ResponseEntity<Agency> getAgencyById(@PathVariable Long id) {
         Agency agency = repository.findById(id).orElse(null);
 
         if (agency != null) {
@@ -47,7 +47,7 @@ public class AgencyController {
 
     // DELETE /agencies/{id}
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAgencyById(@PathVariable int id) {
+    public ResponseEntity<Void> deleteAgencyById(@PathVariable Long id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }

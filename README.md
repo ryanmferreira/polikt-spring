@@ -114,13 +114,9 @@ curl -X POST http://localhost:8080/news \
     "description": "Proposta busca ampliar acesso a dados publicos",
     "content": "Texto completo da noticia aqui.",
     "summary": "Resumo curto da noticia.",
-│       │                   ├── agency
-│       │                   │   ├── Agency.class
-│       │                   │   ├── AgencyController.class
-│       │                   │   └── AgencyRepository.class
     "coverImage": "https://example.com/images/capa.jpg",
     "user": { "id": 1 }
-  }'
+}'
 ```
 
 ### Guides
