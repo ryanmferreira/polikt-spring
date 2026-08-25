@@ -32,6 +32,7 @@ build/
 ### VS Code ###
 .vscode/
 
-### Scripts ###
-*env.sh
+### Environment files ###
+../*env.*
+/*env.*
 *env.*
