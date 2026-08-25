@@ -1,0 +1,23 @@
+info:
+  name: Add a guide step
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: http://localhost:8080/guides/1/steps
+  body:
+    type: json
+    data: |-
+      {
+        "position": 1,
+        "image": "https://exemplo.com/imagens/passo1.png",
+        "content": "Acesse o site da delegacia eletrônica e clique em 'Registrar denúncia'."
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,14 @@
+info:
+  name: Delete guide step by id
+  type: http
+
+http:
+  method: DELETE
+  url: http://localhost:8080/guides/1/steps/2
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
