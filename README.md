@@ -143,6 +143,27 @@ curl -X POST http://localhost:8080/guides \
   }'
 ```
 
+### Guide steps
+
+| Method | Route | Description |
+|---|---|---|
+| `GET` | `/guides/{guideId}/steps` | Lists all steps for a guide |
+| `GET` | `/guides/{guideId}/steps/{id}` | Gets one guide step by ID |
+| `POST` | `/guides/{guideId}/steps` | Creates a guide step |
+| `DELETE` | `/guides/{guideId}/steps/{id}` | Deletes a guide step by ID |
+
+Guide step creation accepts `position`, `content`, and optional `image`. The `guideId` is provided in the path and the guide itself is resolved internally.
+
+```bash
+curl -X POST http://localhost:8080/guides/1/steps \
+  -H "Content-Type: application/json" \
+  -d '{
+    "position": 1,
+    "content": "Primeiro passo para resolver a pendencia.",
+    "image": "https://example.com/images/step-1.jpg"
+  }'
+```
+
 For the `GET /{id}` and `DELETE /{id}` endpoints, a missing resource returns `404 Not Found`. Successful deletion returns `204 No Content`.
 
 ## Testing with Bruno
@@ -165,114 +186,107 @@ The Bruno collection is available in `http-requests/`:
 - `http-requests/guides/get_guide_by_id.yml` - `GET /guides/{id}`
 - `http-requests/guides/add_guide.yml` - `POST /guides`
 - `http-requests/guides/delete_guide_by_id.yml` - `DELETE /guides/{id}`
+- `http-requests/guides/Steps/get_guide_steps.yml` - `GET /guides/{guideId}/steps`
+- `http-requests/guides/Steps/get_guide_step_by_id.yml` - `GET /guides/{guideId}/steps/{id}`
+- `http-requests/guides/Steps/add_a_guide_step.yml` - `POST /guides/{guideId}/steps`
+- `http-requests/guides/Steps/delete_guide_step_by_id.yml` - `DELETE /guides/{guideId}/steps/{id}`
 
 ## Project Structure
 
-```
+```text
 .
-├── api
-│   ├── mvnw
-│   ├── mvnw.cmd
-│   ├── pom.xml
-│   ├── src
-│   │   ├── main
-│   │   │   ├── java
-│   │   │   │   └── com
-│   │   │   │       └── polikt
-│   │   │   │           └── api
-│   │   │   │               ├── ApiApplication.java
-│   │   │   │               ├── agency
-│   │   │   │               │   ├── AgencyController.java
-│   │   │   │               │   ├── Agency.java
-│   │   │   │               │   └── AgencyRepository.java
-│   │   │   │               ├── guide
-│   │   │   │               │   ├── GuideController.java
-│   │   │   │               │   ├── Guide.java
-│   │   │   │               │   └── GuideRepository.java
-│   │   │   │               ├── news
-│   │   │   │               │   ├── NewsController.java
-│   │   │   │               │   ├── News.java
-│   │   │   │               │   └── NewsRepository.java
-│   │   │   │               └── user
-│   │   │   │                   ├── UserController.java
-│   │   │   │                   ├── User.java
-│   │   │   │                   └── UserRepository.java
-│   │   │   └── resources
-│   │   │       └── application.properties
-│   │   └── test
-│   │       └── java
-│   │           └── com
-│   │               └── polikt
-│   │                   └── api
-│   │                       └── ApiApplicationTests.java
-│   └── target
-│       ├── classes
-│       │   ├── application.properties
-│       │   └── com
-│       │       └── polikt
-│       │           └── api
-│       │               ├── ApiApplication.class
-│       │               ├── agency
-│       │               │   ├── Agency.class
-│       │               │   ├── AgencyController.class
-│       │               │   └── AgencyRepository.class
-│       │               ├── guide
-│       │               │   ├── Guide.class
-│       │               │   ├── GuideController.class
-│       │               │   └── GuideRepository.class
-│       │               ├── news
-│       │               │   ├── News.class
-│       │               │   ├── NewsController.class
-│       │               │   └── NewsRepository.class
-│       │               └── user
-│       │                   ├── User.class
-│       │                   ├── UserController.class
-│       │                   └── UserRepository.class
-│       ├── generated-sources
-│       │   └── annotations
-│       ├── generated-test-sources
-│       │   └── test-annotations
-│       ├── maven-status
-│       │   └── maven-compiler-plugin
-│       │       ├── compile
-│       │       │   └── default-compile
-│       │       │       ├── createdFiles.lst
-│       │       │       └── inputFiles.lst
-│       │       └── testCompile
-│       │           └── default-testCompile
-│       │               ├── createdFiles.lst
-│       │               └── inputFiles.lst
-│       └── test-classes
-│           └── com
-│               └── polikt
-│                   └── api
-│                       └── ApiApplicationTests.class
-├── http-requests
-│   ├── guides
-│   │   ├── add_guide.yml
-│   │   ├── delete_guide_by_id.yml
-│   │   ├── folder.yml
-│   │   ├── get_guide_by_id.yml
-│   │   └── get_guides.yml
-│   ├── news
-│   │   ├── add_news.yml
-│   │   ├── delete_news_by_id.yml
-│   │   ├── folder.yml
-│   │   ├── get_news_by_id.yml
-│   │   └── get_news.yml
-│   ├── opencollection.yml
-│   └── users
-│       ├── add_user_by_id.yml
-│       ├── add_user.yml
-│       ├── delete_user_by_id.yml
-│       ├── folder.yml
-│       └── get_users.yml
+├── .git/
+├── .gitignore
 ├── LICENSE
 ├── README.md
-└── sql-schemes
-    ├── create_tables.sql
-    ├── delete_tables.sql
-    ├── drop_database.sql
-    ├── inserts.sql
-    └── select.sql
+├── api/
+│   ├── .gitattributes
+│   ├── .gitignore
+│   ├── .mvn/
+│   │   └── wrapper/
+│   │       └── maven-wrapper.properties
+│   ├── mvnw
+│   ├── mvnw.cmd
+│   ├── pom.xml
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/
+│   │   │   │   └── com/
+│   │   │   │       └── polikt/
+│   │   │   │           └── api/
+│   │   │   │               ├── ApiApplication.java
+│   │   │   │               ├── agency/
+│   │   │   │               │   ├── Agency.java
+│   │   │   │               │   ├── AgencyController.java
+│   │   │   │               │   └── AgencyRepository.java
+│   │   │   │               ├── guide/
+│   │   │   │               │   ├── Guide.java
+│   │   │   │               │   ├── GuideController.java
+│   │   │   │               │   ├── GuideRepository.java
+│   │   │   │               │   └── step/
+│   │   │   │               │       ├── GuideStep.java
+│   │   │   │               │       ├── GuideStepController.java
+│   │   │   │               │       └── GuideStepRepository.java
+│   │   │   │               ├── news/
+│   │   │   │               │   ├── News.java
+│   │   │   │               │   ├── NewsController.java
+│   │   │   │               │   └── NewsRepository.java
+│   │   │   │               └── user/
+│   │   │   │                   ├── User.java
+│   │   │   │                   ├── UserController.java
+│   │   │   │                   └── UserRepository.java
+│   │   │   └── resources/
+│   │   │       └── application.properties
+│   │   └── test/
+│   │       └── java/
+│   │           └── com/
+│   │               └── polikt/
+│   │                   └── api/
+│   │                       └── ApiApplicationTests.java
+│   └── target/
+│       ├── classes/
+│       ├── generated-sources/
+│       ├── generated-test-sources/
+│       ├── maven-status/
+│       └── test-classes/
+├── http-requests/
+│   ├── agencies/
+│   │   ├── add_agency.yml
+│   │   ├── delete_agency_by_id.yml
+│   │   ├── folder.yml
+│   │   ├── get_agencies.yml
+│   │   └── get_agency_by_id.yml
+│   ├── guides/
+│   │   ├── Steps/
+│   │   │   ├── add_a_guide_step.yml
+│   │   │   ├── delete_guide_step_by_id.yml
+│   │   │   ├── folder.yml
+│   │   │   ├── get_guide_step_by_id.yml
+│   │   │   └── get_guide_steps.yml
+│   │   ├── add_guide.yml
+│   │   ├── delete_guide_by_id.yml
+│   │   ├── folder.yml
+│   │   ├── get_guide_by_id.yml
+│   │   └── get_guides.yml
+│   ├── news/
+│   │   ├── add_news.yml
+│   │   ├── delete_news_by_id.yml
+│   │   ├── folder.yml
+│   │   ├── get_news.yml
+│   │   └── get_news_by_id.yml
+│   ├── opencollection.yml
+│   └── users/
+│       ├── add_user.yml
+│       ├── add_user_by_id.yml
+│       ├── delete_user_by_id.yml
+│       ├── folder.yml
+│       └── get_users.yml
+├── set-env.sh
+├── sql-schemes/
+│   ├── create_tables.sql
+│   ├── delete_tables.sql
+│   ├── drop_database.sql
+│   ├── inserts.sql
+│   └── select.sql
+└── LICENSE
 ```
