@@ -1,1 +1,5 @@
-*env*
+# Environment variables
+*env*.sh
+*env*.cmd
+*env*.bat
+*env*.ps1
