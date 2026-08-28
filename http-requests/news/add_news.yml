@@ -10,12 +10,15 @@ http:
     type: json
     data: |-
       {
-        "title": "Camara aprova novo projeto de lei sobre transparencia",
-        "description": "Proposta busca ampliar acesso a dados publicos",
-        "content": "Texto completo da noticia aqui.",
-        "summary": "Resumo curto da noticia.",
-        "coverImage": "https://example.com/images/capa.jpg",
-        "user": { "id": 1 }
+        "title": "Pesquisa presidente 2026: veja o que dizem os levantamentos mais recentes",
+        "description": "Pesquisas recentes mostram Lula numericamente à frente de Flávio Bolsonaro nos cenários testados para a eleição presidencial de 2026.",
+        "content": "Pesquisas recentes do BTG/Nexus e do Datafolha mostram o presidente Luiz Inácio Lula da Silva numericamente à frente de Flávio Bolsonaro nos cenários testados para a eleição presidencial de 2026.",
+        "summary": "Pesquisas recentes do BTG/Nexus e do Datafolha apontam vantagem numérica de Luiz Inácio Lula da Silva sobre Flávio Bolsonaro nos cenários avaliados para a eleição presidencial de 2026. No levantamento do BTG/Nexus divulgado em 24 de agosto, Lula aparece com 41% das intenções de voto, enquanto Flávio Bolsonaro registra 37%.",
+        "body": "## Pesquisas para a eleição de 2026\n\nPesquisas recentes do **BTG/Nexus** e do **Datafolha** mostram o presidente Luiz Inácio Lula da Silva numericamente à frente de Flávio Bolsonaro nos cenários testados para a eleição presidencial de 2026.\n\n---\n\n## BTG/Nexus\n\nNo levantamento divulgado em **24 de agosto**, Lula aparece com **41% das intenções de voto**, enquanto Flávio Bolsonaro registra **37%**.\n\n---\n\n## Demais candidatos\n\nOs demais candidatos aparecem com os seguintes percentuais no cenário pesquisado:\n\n- Ronaldo Caiado (PSD): **5%**\n- Renan Santos (Missão): **3%**\n- Romeu Zma (Novo): **3%**\n- Augusto Cury (Avante): **2%**\n- Samara Martins (UP): **1%**\n- Nenhum, branco ou nulo: **5%**\n- Não sabe ou não respondeu: **3%**\n\n---\n\n## Como interpretar os números\n\nOs números representam as intenções de voto no cenário pesquisado e **não constituem uma previsão do resultado da eleição**.\n\nPesquisas eleitorais retratam o cenário no momento em que são realizadas e podem mudar conforme a campanha eleitoral avança.",
+        "coverImage": "https://conteudo.imguol.com.br/c/noticias/b5/2026/08/06/lula-romeu-zema-renan-santos-flavio-bolsonaro-e-ronaldo-caiado-sao-pre-candidatos-a-presidencia-da-republica-1786025695345_v2_900x506.jpg",
+        "user": {
+          "id": 1
+        }
       }
   auth: inherit
 
@@ -24,3 +27,4 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+​

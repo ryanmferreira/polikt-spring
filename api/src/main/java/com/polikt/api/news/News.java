@@ -37,11 +37,17 @@ public class News {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String summary;
 
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String body;
+
     @Column(name = "cover_image")
     private String coverImage;
 
     @Column(nullable = false)
     private int upvotes = 0;
+
+    @Column(name = "is_published", nullable = false)
+    private boolean isPublished = false;
 
     @JoinColumn(name = "user_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -56,10 +62,19 @@ public class News {
     public News() {
     }
 
-    public News(String title, String description, String content, String coverImage, User user) {
+    public News(
+            String title,
+            String description,
+            String content,
+            String summary,
+            String body,
+            String coverImage,
+            User user) {
         this.title = title;
         this.description = description;
+        this.body = body;
         this.content = content;
+        this.summary = summary;
         this.coverImage = coverImage;
         this.user = user;
     }
@@ -96,6 +111,22 @@ public class News {
 
     public String getSummary() {
         return this.summary;
+    }
+
+    public String getBody() {
+        return this.body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public void setPublished(boolean isPublished) {
+        this.isPublished = isPublished;
+    }
+
+    public boolean isPublished() {
+        return this.isPublished;
     }
 
     public void setSummary(String summary) {
