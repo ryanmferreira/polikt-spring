@@ -10,12 +10,16 @@ http:
     type: json
     data: |-
       {
-        "title": "Como denunciar buracos na rua",
-        "description": "Passo a passo para registrar a reclamacao",
-        "content": "Conteudo completo do guia aqui.",
-        "coverImage": 0,
-        "user": { "id": 1 },
-        "agency": { "id": 1 }
+        "title": "Como solicitar reparos em infraestrutura urbana",
+        "description": "Guia prático para identificar problemas de infraestrutura urbana e solicitar reparos aos órgãos responsáveis.",
+        "content": "Aprenda como identificar problemas de infraestrutura urbana, registrar evidências e encaminhar uma solicitação aos canais oficiais da Prefeitura.",
+        "coverImage": null,
+        "user": {
+          "id": 3
+        },
+        "agency": {
+          "id": 1
+        }
       }
   auth: inherit
 
@@ -24,3 +28,4 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+​

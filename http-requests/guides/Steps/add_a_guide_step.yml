@@ -11,8 +11,8 @@ http:
     data: |-
       {
         "position": 1,
-        "image": "https://exemplo.com/imagens/passo1.png",
-        "content": "Acesse o site da delegacia eletrônica e clique em 'Registrar denúncia'."
+        "image": null,
+        "content": "Lembre-se atentamente: o melhor local para recorrer ao fazer uma denúncia é sempre a Prefeitura de sua cidade. A Prefeitura é o órgão principal responsável por fiscalizar construções irregulares, calçadas danificadas, problemas em vias públicas e seus arredores.\n\n**Passo 1:** Identifique o problema local.\n\n**Passo 2:** Grave vídeos, tire fotos e anote informações para obter maiores evidências.\n\n**Passo 3:** Verifique caso já exista um possível processo ou solicitação relacionada ao problema."
       }
   auth: inherit
 
@@ -21,3 +21,4 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+​

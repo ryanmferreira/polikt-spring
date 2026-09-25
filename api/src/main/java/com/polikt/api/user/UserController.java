@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.polikt.api.config.JwtService;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -18,9 +20,12 @@ public class UserController {
     // Inject the repository
     private final UserRepository repository;
 
-    // Constructor
-    public UserController(UserRepository repository) {
+    // Inject the JWT Service
+    private final JwtService jwtService;
+
+    public UserController(UserRepository repository, JwtService jwtService) {
         this.repository = repository;
+        this.jwtService = jwtService;
     }
 
     // GET /users
@@ -56,5 +61,18 @@ public class UserController {
     @PostMapping
     public User createUser(@RequestBody User user) {
         return repository.save(user);
+    }
+
+    // POST /users/login
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        User user = repository.findByEmail(request.email()).orElse(null);
+
+        if (user == null || !user.getPassword().equals(request.password())) {
+            return ResponseEntity.status(401).build();
+        }
+
+        String token = jwtService.generateToken(user.getEmail());
+        return ResponseEntity.ok(new LoginResponse(token));
     }
 }

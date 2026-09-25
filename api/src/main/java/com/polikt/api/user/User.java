@@ -35,7 +35,9 @@ public class User {
     private String password;
 
     @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    final private LocalDateTime createdAt = LocalDateTime.now();
+
+    public enum Role { ROLE_USER, ROLE_ADMIN }
 
     // Constructors
 
