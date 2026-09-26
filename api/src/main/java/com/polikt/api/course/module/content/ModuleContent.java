@@ -26,6 +26,9 @@ public class ModuleContent {
     @Column
     private String content;
 
+    @Column(name = "cover_image")
+    private String coverImage;
+
     @JoinColumn(name = "module_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
@@ -34,9 +37,10 @@ public class ModuleContent {
     public ModuleContent() {
     }
 
-    public ModuleContent(int position, String content, Module module) {
-        this.position = position;
+    public ModuleContent(String content, String coverImage, int position, Module module) {
         this.content = content;
+        this.coverImage = coverImage;
+        this.position = position;
         this.module = module;
     }
 
@@ -58,6 +62,14 @@ public class ModuleContent {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getCoverImage() {
+        return coverImage;
+    }
+
+    public void setCoverImage(String coverImage) {
+        this.coverImage = coverImage;
     }
 
     public Module getModule() {

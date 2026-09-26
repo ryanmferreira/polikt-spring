@@ -14,7 +14,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "guide_modules")
+@Table(name = "course_modules")
 public class Module {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +22,12 @@ public class Module {
 
     @Column(nullable = false)
     private String title;
+
+    @Column
+    private String description;
+
+    @Column(name = "cover_image")
+    private String coverImage;
 
     @Column(nullable = false)
     private int position;
@@ -34,8 +40,10 @@ public class Module {
     public Module() {
     }
 
-    public Module(String title, int position, Course course) {
+    public Module(String title, String description, String coverImage, int position, Course course) {
         this.title = title;
+        this.description = description;
+        this.coverImage = coverImage;
         this.position = position;
         this.course = course;
     }
@@ -50,6 +58,22 @@ public class Module {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getCoverImage() {
+        return coverImage;
+    }
+
+    public void setCoverImage(String coverImage) {
+        this.coverImage = coverImage;
     }
 
     public int getPosition() {

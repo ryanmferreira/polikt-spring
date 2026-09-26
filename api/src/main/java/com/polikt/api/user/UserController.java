@@ -3,8 +3,10 @@ package com.polikt.api.user;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,15 +19,18 @@ import com.polikt.api.config.JwtService;
 @RequestMapping("/users")
 public class UserController {
 
+    private final PasswordEncoder passwordEncoder;
+
     // Inject the repository
     private final UserRepository repository;
 
     // Inject the JWT Service
     private final JwtService jwtService;
 
-    public UserController(UserRepository repository, JwtService jwtService) {
+    public UserController(UserRepository repository, JwtService jwtService, PasswordEncoder passwordEncoder) {
         this.repository = repository;
         this.jwtService = jwtService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // GET /users
@@ -60,7 +65,39 @@ public class UserController {
     // POST /users
     @PostMapping
     public User createUser(@RequestBody User user) {
+        // user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         return repository.save(user);
+    }
+
+    // PATCH /users/{id}
+    @PatchMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
+        User user = repository.findById(id).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (updatedUser.getName() != null) {
+            user.setName(updatedUser.getName());
+        }
+
+        if (updatedUser.getEmail() != null) {
+            user.setEmail(updatedUser.getEmail());
+        }
+
+        if (updatedUser.getPhone() != null) {
+            user.setPhone(updatedUser.getPhone());
+        }
+
+        if (updatedUser.getPassword() != null) {
+            user.setPassword(updatedUser.getPassword());
+        }
+
+        User savedUser = repository.save(user);
+
+        return ResponseEntity.ok(savedUser);
     }
 
     // POST /users/login

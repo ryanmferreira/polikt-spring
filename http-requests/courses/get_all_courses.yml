@@ -1,11 +1,10 @@
 info:
-  name: Delete agency by id
+  name: Get all courses
   type: http
-  seq: 1
 
 http:
-  method: DELETE
-  url: http://localhost:8080/agencies/2
+  method: GET
+  url: http://localhost:8080/courses
   auth: inherit
 
 settings:

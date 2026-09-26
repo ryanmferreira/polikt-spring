@@ -5,11 +5,35 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
+   
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    private static final String[] PUBLIC_GET_ROUTES = {
+            "/courses",
+            "/courses/*",
+            "/courses/*/*",
+            "/courses/*/modules",
+            "/courses/*/modules/*",
+
+            "/agencies",
+            "/agencies/*",
+
+            "/news",
+            "/news/*",
+
+            "/guides",
+            "/guides/*"
+    };
 
     private final JwtAuthFilter jwtAuthFilter;
 
@@ -19,11 +43,19 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors(Customizer.withDefaults()).csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.GET, "/users/login", "/users", "/news", "/guides").permitAll()
-                .anyRequest().authenticated()
-                )
+        http.cors(Customizer.withDefaults()).csrf(csrf -> csrf.disable()).authorizeHttpRequests(auth -> auth
+
+                // Public endpoints
+                .requestMatchers(HttpMethod.GET, PUBLIC_GET_ROUTES).permitAll()
+
+                // Login endpoint
+                .requestMatchers(HttpMethod.POST, "/users/login").permitAll()
+
+                // Entrypoint
+                .requestMatchers("/").permitAll()
+
+                // All the other endpoints require a valid JWT
+                .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

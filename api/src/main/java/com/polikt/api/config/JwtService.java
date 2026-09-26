@@ -23,7 +23,7 @@ public class JwtService {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    // Gera um token pra um email
+    // Generates a JWT token
     public String generateToken(String email) {
         return Jwts.builder()
                 .subject(email)
@@ -33,7 +33,7 @@ public class JwtService {
                 .compact();
     }
 
-    // Extrai o email de dentro do token
+    // Extracts the email from the JWT token
     public String extractEmail(String token) {
         return Jwts.parser()
                 .verifyWith(getKey())
@@ -43,7 +43,7 @@ public class JwtService {
                 .getSubject();
     }
 
-    // Confere se o token é válido (assinatura + não expirado)
+    // Confirms whether the token is valid or not
     public boolean isTokenValid(String token) {
         try {
             Jwts.parser().verifyWith(getKey()).build().parseSignedClaims(token);

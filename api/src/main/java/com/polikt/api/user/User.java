@@ -37,7 +37,9 @@ public class User {
     @Column(name = "created_at", updatable = false)
     final private LocalDateTime createdAt = LocalDateTime.now();
 
-    public enum Role { ROLE_USER, ROLE_ADMIN }
+    public enum Role {
+        ROLE_USER, ROLE_ADMIN
+    }
 
     // Constructors
 
