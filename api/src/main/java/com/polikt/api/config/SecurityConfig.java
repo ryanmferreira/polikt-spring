@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, PUBLIC_GET_ROUTES).permitAll()
 
                 // Login endpoint
-                .requestMatchers(HttpMethod.POST, "/users/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/users/login" ,"/users").permitAll()
 
                 // Entrypoint
                 .requestMatchers("/").permitAll()

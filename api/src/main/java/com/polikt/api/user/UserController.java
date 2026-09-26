@@ -19,6 +19,7 @@ import com.polikt.api.config.JwtService;
 @RequestMapping("/users")
 public class UserController {
 
+    // Inject the password encoder
     private final PasswordEncoder passwordEncoder;
 
     // Inject the repository
@@ -65,7 +66,7 @@ public class UserController {
     // POST /users
     @PostMapping
     public User createUser(@RequestBody User user) {
-        // user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return repository.save(user);
     }
@@ -92,7 +93,7 @@ public class UserController {
         }
 
         if (updatedUser.getPassword() != null) {
-            user.setPassword(updatedUser.getPassword());
+            user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
         }
 
         User savedUser = repository.save(user);
@@ -100,12 +101,12 @@ public class UserController {
         return ResponseEntity.ok(savedUser);
     }
 
-    // POST /users/login
-    @PostMapping("/login")
+    // POST /users/auth
+    @PostMapping("/auth")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         User user = repository.findByEmail(request.email()).orElse(null);
 
-        if (user == null || !user.getPassword().equals(request.password())) {
+        if (user == null || !passwordEncoder.matches(request.password(), user.getPassword())) {
             return ResponseEntity.status(401).build();
         }
 

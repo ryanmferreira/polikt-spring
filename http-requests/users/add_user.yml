@@ -11,9 +11,9 @@ http:
     data: |-
       {
         "name": "Ryan Ferreira",
-        "email": "dev.ryanmferreira@outlook.com",
-        "password": "psswd@123",
-        "phone": "11999999999"
+        "email": "ryanmferreira@duck.com",
+        "password": "psswd@12345",
+        "phone": "11969696969"
       }
   auth: inherit
 
