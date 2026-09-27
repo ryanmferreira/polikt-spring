@@ -18,7 +18,10 @@ import com.polikt.api.guide.GuideRepository;
 @RequestMapping("/guides/{guideId}/steps")
 public class GuideStepController {
 
+    // Inject the Guide Step repository
     private final GuideStepRepository repository;
+
+    // Inject the Guide repository
     private final GuideRepository guideRepository;
 
     public GuideStepController(GuideStepRepository repository, GuideRepository guideRepository) {
@@ -26,11 +29,13 @@ public class GuideStepController {
         this.guideRepository = guideRepository;
     }
 
+    // GET /guides/{guideId}/steps
     @GetMapping
     public List<GuideStep> getAllSteps(@PathVariable Long guideId) {
         return repository.findByGuideIdOrderByPositionAsc(guideId);
     }
 
+    // GET /guides/{guideId}/steps/{id}
     @GetMapping("/{id}")
     public ResponseEntity<GuideStep> getStepById(@PathVariable Long guideId, @PathVariable Long id) {
         GuideStep step = repository.findById(id).orElse(null);
@@ -42,6 +47,7 @@ public class GuideStepController {
         return ResponseEntity.notFound().build();
     }
 
+    // POST /guides/{guideId}/steps
     @PostMapping
     public ResponseEntity<GuideStep> createStep(@PathVariable Long guideId, @RequestBody GuideStep step) {
         Guide guide = guideRepository.findById(guideId).orElse(null);
@@ -51,9 +57,11 @@ public class GuideStepController {
         }
 
         step.setGuide(guide);
+
         return ResponseEntity.ok(repository.save(step));
     }
 
+    // DELETE /guides/{guideId}/steps/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStepById(@PathVariable Long guideId, @PathVariable Long id) {
         GuideStep step = repository.findById(id).orElse(null);

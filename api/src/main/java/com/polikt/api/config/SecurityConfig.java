@@ -12,18 +12,20 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 public class SecurityConfig {
-   
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // Define the public GET routes
     private static final String[] PUBLIC_GET_ROUTES = {
             "/courses",
             "/courses/*",
             "/courses/*/*",
             "/courses/*/modules",
             "/courses/*/modules/*",
+            "/courses/*/modules/*/content",
+            "/courses/*/modules/*/content/*",
 
             "/agencies",
             "/agencies/*",
@@ -37,6 +39,7 @@ public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
 
+    // Inject the JWT Auth Filter
     public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
         this.jwtAuthFilter = jwtAuthFilter;
     }
@@ -49,7 +52,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, PUBLIC_GET_ROUTES).permitAll()
 
                 // Login endpoint
-                .requestMatchers(HttpMethod.POST, "/users/login" ,"/users").permitAll()
+                .requestMatchers(HttpMethod.POST, "/users/auth", "/users").permitAll()
 
                 // Entrypoint
                 .requestMatchers("/").permitAll()

@@ -1,7 +1,7 @@
 opencollection: 1.0.0
 
 info:
-  name: HTTP
+  name: Polikt API
 config:
   proxy:
     inherit: true

@@ -15,17 +15,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/guides")
 public class GuideController {
 
+    // Inject the repository
     private final GuideRepository repository;
 
     public GuideController(GuideRepository repository) {
         this.repository = repository;
     }
 
+    // GET /guides
     @GetMapping
     public List<Guide> getAllGuides() {
         return repository.findAll();
     }
 
+    // GET /guides/{id}
     @GetMapping("/{id}")
     public ResponseEntity<Guide> getGuideById(@PathVariable Long id) {
         Guide guide = repository.findById(id).orElse(null);
@@ -37,11 +40,13 @@ public class GuideController {
         return ResponseEntity.notFound().build();
     }
 
+    // POST /guides
     @PostMapping
     public Guide createGuide(@RequestBody Guide guide) {
         return repository.save(guide);
     }
 
+    // DELETE /guides/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteGuideById(@PathVariable Long id) {
         if (!repository.existsById(id)) {

@@ -73,7 +73,7 @@ public class UserController {
 
     // PATCH /users/{id}
     @PatchMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
+    public ResponseEntity<User> updateUserById(@PathVariable Long id, @RequestBody User updatedUser) {
         User user = repository.findById(id).orElse(null);
 
         if (user == null) {

@@ -15,13 +15,13 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "module_content")
-public class ModuleContent {
+public class Content {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
-    private int position;
+    private Integer position;
 
     @Column
     private String content;
@@ -34,10 +34,10 @@ public class ModuleContent {
     @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     private Module module;
 
-    public ModuleContent() {
+    public Content() {
     }
 
-    public ModuleContent(String content, String coverImage, int position, Module module) {
+    public Content(String content, String coverImage, Integer position, Module module) {
         this.content = content;
         this.coverImage = coverImage;
         this.position = position;
@@ -48,11 +48,11 @@ public class ModuleContent {
         return id;
     }
 
-    public int getPosition() {
+    public Integer getPosition() {
         return position;
     }
 
-    public void setPosition(int position) {
+    public void setPosition(Integer position) {
         this.position = position;
     }
 

@@ -1,19 +1,20 @@
 info:
-  name: Add course
+  name: Add course module
   type: http
-  seq: 1
+  seq: 2
 
 http:
   method: POST
-  url: http://localhost:8080/courses
+  url: http://localhost:8080/courses/1/modules
   body:
     type: json
     data: |-
       {
-        "title": "lorem ipsum",
-        "description": "lorem ipsum",
-        "coverImage": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fhoanghamobile.com%2Ftin-tuc%2Fwp-content%2Fuploads%2F2023%2F10%2Flinux.jpg&f=1&nofb=1&ipt=a34a90c7957c1dcc8d695aa7d04c684d69fec7136931d12206701974bd3e7f7f",
-        "user": {
+        "title": "Lorem Ipsum 2",
+        "description": "Lorem Ipsum so much",
+        "cover_image": "Lorem Ipsum 2",
+        "position": 1,
+        "course": {
           "id": 1
         }
       }

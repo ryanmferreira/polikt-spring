@@ -22,7 +22,7 @@ public class GuideStep {
     private Long id;
 
     @Column(nullable = false)
-    private int position;
+    private Integer position;
 
     @Column
     private String image;
@@ -38,7 +38,7 @@ public class GuideStep {
     public GuideStep() {
     }
 
-    public GuideStep(int position, String image, String content, Guide guide) {
+    public GuideStep(Integer position, String image, String content, Guide guide) {
         this.position = position;
         this.image = image;
         this.content = content;
@@ -49,11 +49,11 @@ public class GuideStep {
         return this.id;
     }
 
-    public int getPosition() {
+    public Integer getPosition() {
         return this.position;
     }
 
-    public void setPosition(int position) {
+    public void setPosition(Integer position) {
         this.position = position;
     }
 

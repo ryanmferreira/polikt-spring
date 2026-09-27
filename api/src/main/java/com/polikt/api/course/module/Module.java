@@ -30,7 +30,7 @@ public class Module {
     private String coverImage;
 
     @Column(nullable = false)
-    private int position;
+    private Integer position;
 
     @JoinColumn(name = "course_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -40,7 +40,7 @@ public class Module {
     public Module() {
     }
 
-    public Module(String title, String description, String coverImage, int position, Course course) {
+    public Module(String title, String description, String coverImage, Integer position, Course course) {
         this.title = title;
         this.description = description;
         this.coverImage = coverImage;
@@ -76,11 +76,11 @@ public class Module {
         this.coverImage = coverImage;
     }
 
-    public int getPosition() {
+    public Integer getPosition() {
         return position;
     }
 
-    public void setPosition(int position) {
+    public void setPosition(Integer position) {
         this.position = position;
     }
 
