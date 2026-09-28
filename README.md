@@ -34,14 +34,41 @@ REST API for **Polikt** - a platform for news, guides and agencies - built with 
 
 ## Configuration
 
-Edit `api/src/main/resources/application.properties`:
+You must declare the following environment variables:
+
+- `DB_URL`
+- `DB_USERNAME`
+- `DB_PASSWORD`
+- `PORT`
+
+In Linux, you can use something like:
+```bash
+#!/usr/bin/env bash
+
+export DB_URL="jdbc:postgresql://<url>/<db_name>?sslmode=require"
+export DB_USERNAME="user_name"
+export DB_PASSWORD="user_password"
+```
+
+Or, in Windows, you can use something like:
+```powershell
+set DB_URL=jdbc:postgresql://<url>/<db_name>?sslmode=require
+set DB_USERNAME=user_name
+set DB_PASSWORD=user_password
+```
+
+Application configuration is done in:
+
+`api/src/main/resources/application.properties`:
 
 ```properties
 spring.application.name=api
 
-spring.datasource.url=jdbc:postgresql://localhost:5432/polikt_db
-spring.datasource.username=postgres
-spring.datasource.password=123456
+spring.datasource.url=${DB_URL:jdbc:postgresql://localhost:5432/polikt_db}
+spring.datasource.username=${DB_USERNAME:postgres}
+spring.datasource.password=${DB_PASSWORD:postgres}
+
+server.port=${PORT:8080}
 
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
@@ -53,14 +80,15 @@ spring.jpa.show-sql=true
 
 ```bash
 cd api
-./mvnw spring-boot:run
+
+./mvnw spring-boot:run # or "mvnw.cmd spring-boot:run" in Windows
 ```
 
-The API will be available at `http://localhost:8080`.
+The API will be available, by default, at `http://localhost:8080`.
 
 ## Endpoints
 
-All endpoints return JSON except `GET /`, which returns the welcome HTML. The API does not currently expose update endpoints.
+All endpoints return JSON except `GET /`, which returns the welcome HTML. Protected endpoints require an `Authorization: Bearer <token>` header.
 
 ### Root
 
@@ -76,6 +104,8 @@ All endpoints return JSON except `GET /`, which returns the welcome HTML. The AP
 | `GET` | `/users/{id}` | Gets one user by ID |
 | `POST` | `/users` | Creates a user |
 | `DELETE` | `/users/{id}` | Deletes a user by ID |
+| `PATCH` | `/users/{id}` | Partially updates a user |
+| `POST` | `/users/auth` | Authenticates a user and returns a JWT |
 
 User creation accepts `name`, `email`, `password` and the optional `phone`. The response includes `id`, `name`, `email`, `phone` and `createdAt`; `password` is write-only and is not returned.
 
@@ -134,6 +164,69 @@ curl -X POST http://localhost:8080/news \
 }'
 ```
 
+Login accepts `email` and `password` and returns `{ "token": "..." }`. User creation and login are public; the remaining user endpoints require authentication. `PATCH /users/{id}` accepts any subset of `name`, `email`, `password` and `phone`.
+
+```bash
+curl -X POST http://localhost:8080/users/auth \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "dev.ryanmferreira@outlook.com",
+    "password": "psswd@123"
+  }'
+```
+
+`GET` endpoints are public. Creating and deleting agencies require authentication.
+
+### Courses
+
+| Method | Route | Description |
+|---|---|---|
+| `GET` | `/courses` | Lists all courses |
+| `GET` | `/courses/{id}` | Gets one course by ID |
+| `POST` | `/courses` | Creates a course |
+| `PATCH` | `/courses/{id}` | Partially updates a course |
+| `DELETE` | `/courses/{id}` | Deletes a course by ID |
+
+Course creation accepts `title`, `description`, `coverImage` and `user`, where `user` is an object containing its `id`. `PATCH` accepts any subset of `title`, `description` and `coverImage`.
+
+```bash
+curl -X POST http://localhost:8080/courses \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Introducao a cidadania",
+    "description": "Curso introdutorio",
+    "coverImage": "https://example.com/images/curso.jpg",
+    "user": { "id": 1 }
+  }'
+```
+
+Course `GET` endpoints are public. Creating, updating and deleting courses require authentication.
+
+### Course modules
+
+| Method | Route | Description |
+|---|---|---|
+| `GET` | `/courses/{courseId}/modules` | Lists all modules for a course |
+| `GET` | `/courses/{courseId}/modules/{id}` | Gets one module by ID |
+| `POST` | `/courses/{courseId}/modules` | Creates a module in a course |
+| `PATCH` | `/courses/{courseId}/modules/{id}` | Partially updates a module |
+| `DELETE` | `/courses/{courseId}/modules/{id}` | Deletes a module by ID |
+
+Module creation accepts `title`, `position` and the optional `description` and `coverImage`. The course is resolved from `courseId`. `PATCH` accepts any subset of those module fields.
+
+### Module content
+
+| Method | Route | Description |
+|---|---|---|
+| `GET` | `/courses/{courseId}/modules/{moduleId}/content` | Lists all content items for a module |
+| `GET` | `/courses/{courseId}/modules/{moduleId}/content/{id}` | Gets one content item by ID |
+| `POST` | `/courses/{courseId}/modules/{moduleId}/content` | Creates content in a module |
+| `PATCH` | `/courses/{courseId}/modules/{moduleId}/content/{id}` | Updates a content item |
+| `DELETE` | `/courses/{courseId}/modules/{moduleId}/content/{id}` | Deletes a content item by ID |
+
+Content creation accepts `content`, `coverImage` and `position`. The module is resolved from `moduleId`.
+
 ### Guides
 
 | Method | Route | Description |
@@ -189,6 +282,8 @@ The Bruno collection is available in `http-requests/`:
 - `http-requests/users/add_user.yml` - `POST /users`
 - `http-requests/users/add_user_by_id.yml` - `GET /users/{id}`
 - `http-requests/users/delete_user_by_id.yml` - `DELETE /users/{id}`
+- `http-requests/users/update_user_by_id.yml` - `PATCH /users/{id}`
+- `http-requests/login/login.yml` - `POST /users/auth`
 - `http-requests/agencies/get_agencies.yml` - `GET /agencies`
 - `http-requests/agencies/get_agency_by_id.yml` - `GET /agencies/{id}`
 - `http-requests/agencies/add_agency.yml` - `POST /agencies`
@@ -201,107 +296,147 @@ The Bruno collection is available in `http-requests/`:
 - `http-requests/guides/get_guide_by_id.yml` - `GET /guides/{id}`
 - `http-requests/guides/add_guide.yml` - `POST /guides`
 - `http-requests/guides/delete_guide_by_id.yml` - `DELETE /guides/{id}`
-- `http-requests/guides/Steps/get_guide_steps.yml` - `GET /guides/{guideId}/steps`
-- `http-requests/guides/Steps/get_guide_step_by_id.yml` - `GET /guides/{guideId}/steps/{id}`
-- `http-requests/guides/Steps/add_a_guide_step.yml` - `POST /guides/{guideId}/steps`
-- `http-requests/guides/Steps/delete_guide_step_by_id.yml` - `DELETE /guides/{guideId}/steps/{id}`
+- `http-requests/guides/steps/get_guide_steps.yml` - `GET /guides/{guideId}/steps`
+- `http-requests/guides/steps/get_guide_step_by_id.yml` - `GET /guides/{guideId}/steps/{id}`
+- `http-requests/guides/steps/add_a_guide_step.yml` - `POST /guides/{guideId}/steps`
+- `http-requests/guides/steps/delete_guide_step_by_id.yml` - `DELETE /guides/{guideId}/steps/{id}`
+- `http-requests/courses/get_all_courses.yml` - `GET /courses`
+- `http-requests/courses/get_course_by_id.yml` - `GET /courses/{id}`
+- `http-requests/courses/add_course.yml` - `POST /courses`
+- `http-requests/courses/edit_course_by_id.yml` - `PATCH /courses/{id}`
+- `http-requests/courses/delete_course_by_id.yml` - `DELETE /courses/{id}`
+- `http-requests/courses/modules/get_all_course_modules.yml` - `GET /courses/{courseId}/modules`
+- `http-requests/courses/modules/get_course_module_by_id.yml` - `GET /courses/{courseId}/modules/{id}`
+- `http-requests/courses/modules/add_course_module.yml` - `POST /courses/{courseId}/modules`
+- `http-requests/courses/modules/edit_module_course_by_id.yml` - `PATCH /courses/{courseId}/modules/{id}`
+- `http-requests/courses/modules/delete_module_by_id.yml` - `DELETE /courses/{courseId}/modules/{id}`
+- `http-requests/courses/modules/content/get_all_module_contents.yml` - `GET /courses/{courseId}/modules/{moduleId}/content`
+- `http-requests/courses/modules/content/get_module_content_by_id.yml` - `GET /courses/{courseId}/modules/{moduleId}/content/{id}`
+- `http-requests/courses/modules/content/add_module_content.yml` - `POST /courses/{courseId}/modules/{moduleId}/content`
+- `http-requests/courses/modules/content/edit_module_content_by_id.yml` - `PATCH /courses/{courseId}/modules/{moduleId}/content/{id}`
+- `http-requests/courses/modules/content/delete_module_content_by_id.yml` - `DELETE /courses/{courseId}/modules/{moduleId}/content/{id}`
 
 ## Project Structure
 
-```text
+```plaintext
 .
-├── .git/
-├── .gitignore
+├── api
+│   ├── mvnw
+│   ├── mvnw.cmd
+│   ├── pom.xml
+│   └── src
+│       ├── main
+│       │   ├── java
+│       │   │   └── com
+│       │   │       └── polikt
+│       │   │           └── api
+│       │   │               ├── agency
+│       │   │               │   ├── AgencyController.java
+│       │   │               │   ├── Agency.java
+│       │   │               │   └── AgencyRepository.java
+│       │   │               ├── ApiApplication.java
+│       │   │               ├── config
+│       │   │               │   ├── CorsConfig.java
+│       │   │               │   ├── JwtAuthFilter.java
+│       │   │               │   ├── JwtService.java
+│       │   │               │   └── SecurityConfig.java
+│       │   │               ├── course
+│       │   │               │   ├── CourseController.java
+│       │   │               │   ├── Course.java
+│       │   │               │   ├── CourseRepository.java
+│       │   │               │   └── module
+│       │   │               │       ├── content
+│       │   │               │       │   ├── ContentController.java
+│       │   │               │       │   ├── Content.java
+│       │   │               │       │   └── ContentRepository.java
+│       │   │               │       ├── ModuleController.java
+│       │   │               │       ├── Module.java
+│       │   │               │       └── ModuleRepository.java
+│       │   │               ├── guide
+│       │   │               │   ├── GuideController.java
+│       │   │               │   ├── Guide.java
+│       │   │               │   ├── GuideRepository.java
+│       │   │               │   └── step
+│       │   │               │       ├── GuideStepController.java
+│       │   │               │       ├── GuideStep.java
+│       │   │               │       └── GuideStepRepository.java
+│       │   │               ├── news
+│       │   │               │   ├── NewsController.java
+│       │   │               │   ├── News.java
+│       │   │               │   └── NewsRepository.java
+│       │   │               └── user
+│       │   │                   ├── LoginRequest.java
+│       │   │                   ├── LoginResponse.java
+│       │   │                   ├── UserController.java
+│       │   │                   ├── User.java
+│       │   │                   └── UserRepository.java
+│       │   └── resources
+│       │       └── application.properties
+│       └── test
+│           └── java
+│               └── com
+│                   └── polikt
+│                       └── api
+│                           └── ApiApplicationTests.java
+├── Dockerfile
+├── http-requests
+│   ├── agencies
+│   │   ├── add_agency.yml
+│   │   ├── delete_agency_by_id.yml
+│   │   ├── folder.yml
+│   │   ├── get_agencies.yml
+│   │   └── get_agency_by_id.yml
+│   ├── courses
+│   │   ├── add_course.yml
+│   │   ├── delete_course_by_id.yml
+│   │   ├── edit_course_by_id.yml
+│   │   ├── folder.yml
+│   │   ├── get_all_courses.yml
+│   │   ├── get_course_by_id.yml
+│   │   └── modules
+│   │       ├── add_course_module.yml
+│   │       ├── content
+│   │       │   ├── add_module_content.yml
+│   │       │   ├── delete_module_content_by_id.yml
+│   │       │   ├── edit_module_content_by_id.yml
+│   │       │   ├── folder.yml
+│   │       │   ├── get_all_module_contents.yml
+│   │       │   └── get_module_content_by_id.yml
+│   │       ├── delete_module_by_id.yml
+│   │       ├── edit_module_course_by_id.yml
+│   │       ├── folder.yml
+│   │       ├── get_all_course_modules.yml
+│   │       └── get_course_module_by_id.yml
+│   ├── guides
+│   │   ├── add_guide.yml
+│   │   ├── delete_guide_by_id.yml
+│   │   ├── folder.yml
+│   │   ├── get_guide_by_id.yml
+│   │   ├── get_guides.yml
+│   │   └── steps
+│   │       ├── add_a_guide_step.yml
+│   │       ├── delete_guide_step_by_id.yml
+│   │       ├── folder.yml
+│   │       ├── get_guide_step_by_id.yml
+│   │       └── get_guide_steps.yml
+│   ├── login
+│   │   ├── folder.yml
+│   │   └── login.yml
+│   ├── news
+│   │   ├── add_news.yml
+│   │   ├── delete_news_by_id.yml
+│   │   ├── folder.yml
+│   │   ├── get_news_by_id.yml
+│   │   └── get_news.yml
+│   ├── opencollection.yml
+│   └── users
+│       ├── add_user_by_id.yml
+│       ├── add_user.yml
+│       ├── delete_user_by_id.yml
+│       ├── folder.yml
+│       ├── get_users.yml
+│       └── update_user_by_id.yml
 ├── LICENSE
 ├── README.md
-├── api/
-│   ├── .gitattributes
-│   ├── .gitignore
-│   ├── .mvn/
-│   │   └── wrapper/
-│   │       └── maven-wrapper.properties
-│   ├── mvnw
-│   ├── mvnw.cmd
-│   ├── pom.xml
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/
-│   │   │   │   └── com/
-│   │   │   │       └── polikt/
-│   │   │   │           └── api/
-│   │   │   │               ├── ApiApplication.java
-│   │   │   │               ├── agency/
-│   │   │   │               │   ├── Agency.java
-│   │   │   │               │   ├── AgencyController.java
-│   │   │   │               │   └── AgencyRepository.java
-│   │   │   │               ├── guide/
-│   │   │   │               │   ├── Guide.java
-│   │   │   │               │   ├── GuideController.java
-│   │   │   │               │   ├── GuideRepository.java
-│   │   │   │               │   └── step/
-│   │   │   │               │       ├── GuideStep.java
-│   │   │   │               │       ├── GuideStepController.java
-│   │   │   │               │       └── GuideStepRepository.java
-│   │   │   │               ├── news/
-│   │   │   │               │   ├── News.java
-│   │   │   │               │   ├── NewsController.java
-│   │   │   │               │   └── NewsRepository.java
-│   │   │   │               └── user/
-│   │   │   │                   ├── User.java
-│   │   │   │                   ├── UserController.java
-│   │   │   │                   └── UserRepository.java
-│   │   │   └── resources/
-│   │   │       └── application.properties
-│   │   └── test/
-│   │       └── java/
-│   │           └── com/
-│   │               └── polikt/
-│   │                   └── api/
-│   │                       └── ApiApplicationTests.java
-│   └── target/
-│       ├── classes/
-│       ├── generated-sources/
-│       ├── generated-test-sources/
-│       ├── maven-status/
-│       └── test-classes/
-├── http-requests/
-│   ├── agencies/
-│   │   ├── add_agency.yml
-│   │   ├── delete_agency_by_id.yml
-│   │   ├── folder.yml
-│   │   ├── get_agencies.yml
-│   │   └── get_agency_by_id.yml
-│   ├── guides/
-│   │   ├── Steps/
-│   │   │   ├── add_a_guide_step.yml
-│   │   │   ├── delete_guide_step_by_id.yml
-│   │   │   ├── folder.yml
-│   │   │   ├── get_guide_step_by_id.yml
-│   │   │   └── get_guide_steps.yml
-│   │   ├── add_guide.yml
-│   │   ├── delete_guide_by_id.yml
-│   │   ├── folder.yml
-│   │   ├── get_guide_by_id.yml
-│   │   └── get_guides.yml
-│   ├── news/
-│   │   ├── add_news.yml
-│   │   ├── delete_news_by_id.yml
-│   │   ├── folder.yml
-│   │   ├── get_news.yml
-│   │   └── get_news_by_id.yml
-│   ├── opencollection.yml
-│   └── users/
-│       ├── add_user.yml
-│       ├── add_user_by_id.yml
-│       ├── delete_user_by_id.yml
-│       ├── folder.yml
-│       └── get_users.yml
-├── set-env.sh
-├── sql-schemes/
-│   ├── create_tables.sql
-│   ├── delete_tables.sql
-│   ├── drop_database.sql
-│   ├── inserts.sql
-│   └── select.sql
-└── LICENSE
+└── README.md
 ```
