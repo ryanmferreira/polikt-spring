@@ -278,20 +278,29 @@ For the `GET /{id}` and `DELETE /{id}` endpoints, a missing resource returns `40
 
 The Bruno collection is available in `http-requests/`:
 
+Users:
 - `http-requests/users/get_users.yml` - `GET /users`
 - `http-requests/users/add_user.yml` - `POST /users`
 - `http-requests/users/add_user_by_id.yml` - `GET /users/{id}`
 - `http-requests/users/delete_user_by_id.yml` - `DELETE /users/{id}`
 - `http-requests/users/update_user_by_id.yml` - `PATCH /users/{id}`
+
+Login:
 - `http-requests/login/login.yml` - `POST /users/auth`
+
+Agencies:
 - `http-requests/agencies/get_agencies.yml` - `GET /agencies`
 - `http-requests/agencies/get_agency_by_id.yml` - `GET /agencies/{id}`
 - `http-requests/agencies/add_agency.yml` - `POST /agencies`
 - `http-requests/agencies/delete_agency_by_id.yml` - `DELETE /agencies/{id}`
+
+News:
 - `http-requests/news/get_news.yml` - `GET /news`
 - `http-requests/news/get_news_by_id.yml` - `GET /news/{id}`
 - `http-requests/news/add_news.yml` - `POST /news`
 - `http-requests/news/delete_news_by_id.yml` - `DELETE /news/{id}`
+
+Guides:
 - `http-requests/guides/get_guides.yml` - `GET /guides`
 - `http-requests/guides/get_guide_by_id.yml` - `GET /guides/{id}`
 - `http-requests/guides/add_guide.yml` - `POST /guides`
@@ -300,6 +309,8 @@ The Bruno collection is available in `http-requests/`:
 - `http-requests/guides/steps/get_guide_step_by_id.yml` - `GET /guides/{guideId}/steps/{id}`
 - `http-requests/guides/steps/add_a_guide_step.yml` - `POST /guides/{guideId}/steps`
 - `http-requests/guides/steps/delete_guide_step_by_id.yml` - `DELETE /guides/{guideId}/steps/{id}`
+
+Courses:
 - `http-requests/courses/get_all_courses.yml` - `GET /courses`
 - `http-requests/courses/get_course_by_id.yml` - `GET /courses/{id}`
 - `http-requests/courses/add_course.yml` - `POST /courses`
@@ -437,6 +448,5 @@ The Bruno collection is available in `http-requests/`:
 │       ├── get_users.yml
 │       └── update_user_by_id.yml
 ├── LICENSE
-├── README.md
 └── README.md
 ```
