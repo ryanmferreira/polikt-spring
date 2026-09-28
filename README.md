@@ -21,45 +21,34 @@ REST API for **Polikt** - a platform for news, guides and agencies - built with 
 
 - Java 26
 - Spring Boot 4.1.0
-- Spring Web MVC
-- Spring Data JPA
 - PostgreSQL
 - Maven
+
+Other dependencies:
+- Spring Web MVC
+- Spring Data JPA
+- Json Web Token (JWT)
+- Spring Starter Security
 
 ## Prerequisites
 
 - JDK 26+
 - Maven (or use the `./mvnw` wrapper)
-- PostgreSQL running locally
+- PostgreSQL database running
 
 ## Configuration
 
-You must declare the following environment variables:
+You must declare the following environment variables.
 
 - `DB_URL`
 - `DB_USERNAME`
 - `DB_PASSWORD`
 - `PORT`
 
-In Linux, you can use something like:
-```bash
-#!/usr/bin/env bash
 
-export DB_URL="jdbc:postgresql://<url>/<db_name>?sslmode=require"
-export DB_USERNAME="user_name"
-export DB_PASSWORD="user_password"
-```
+If not declared, the default values will be used. Application configuration is done in:
 
-Or, in Windows, you can use something like:
-```powershell
-set DB_URL=jdbc:postgresql://<url>/<db_name>?sslmode=require
-set DB_USERNAME=user_name
-set DB_PASSWORD=user_password
-```
-
-Application configuration is done in:
-
-`api/src/main/resources/application.properties`:
+> `api/src/main/resources/application.properties`:
 
 ```properties
 spring.application.name=api
@@ -75,6 +64,22 @@ spring.jpa.show-sql=true
 ```
 
 > `ddl-auto=update` creates/updates tables automatically from the JPA entities.
+
+In Linux, you can use something like:
+```bash
+#!/usr/bin/env bash
+
+export DB_URL="jdbc:postgresql://<url>/<db_name>?sslmode=require"
+export DB_USERNAME="user_name"
+export DB_PASSWORD="user_password"
+```
+
+Or, in Windows, you can use something like:
+```cmd
+set DB_URL=jdbc:postgresql://<url>/<db_name>?sslmode=require
+set DB_USERNAME=user_name
+set DB_PASSWORD=user_password
+```
 
 ## Running
 
