@@ -34,7 +34,9 @@ public class SecurityConfig {
             "/news/*",
 
             "/guides",
-            "/guides/*"
+            "/guides/*",
+            "/guides/*/steps",
+            "/guides/*/steps/*"
     };
 
     private final JwtAuthFilter jwtAuthFilter;
