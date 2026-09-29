@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.polikt.api.course.Course;
 import com.polikt.api.guide.Guide;
 import com.polikt.api.guide.GuideRepository;
 
