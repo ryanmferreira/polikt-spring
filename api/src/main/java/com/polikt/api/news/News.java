@@ -125,7 +125,7 @@ public class News {
         this.isPublished = isPublished;
     }
 
-    public boolean isPublished() {
+    public boolean getPublished() {
         return this.isPublished;
     }
 

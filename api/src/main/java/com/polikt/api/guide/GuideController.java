@@ -5,11 +5,14 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.polikt.api.course.Course;
 
 @RestController
 @RequestMapping("/guides")
@@ -55,5 +58,31 @@ public class GuideController {
 
         repository.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // PATCH /guides/{id}
+    @PatchMapping("/{id}")
+    public ResponseEntity<Guide> updateGuideById(@PathVariable Long id, @RequestBody Guide updatedGuide) {
+        Guide guide = repository.findById(id).orElse(null);
+
+        if (guide == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (updatedGuide.getTitle() != null) {
+            guide.setTitle(updatedGuide.getTitle());
+        }
+
+        if (updatedGuide.getDescription() != null) {
+            guide.setDescription(updatedGuide.getDescription());
+        }
+
+        if (updatedGuide.getCoverImage() != null) {
+            guide.setCoverImage(updatedGuide.getCoverImage());
+        }
+
+        Guide savedGuide = repository.save(guide);
+
+        return ResponseEntity.ok(savedGuide);
     }
 }

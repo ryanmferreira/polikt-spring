@@ -5,11 +5,14 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.polikt.api.course.Course;
 
 @RestController
 @RequestMapping("/news")
@@ -59,4 +62,40 @@ public class NewsController {
     }
 
     // PUT /news/{id}
+    @PatchMapping("/{id}")
+    public ResponseEntity<News> updateCourseById(@PathVariable Long id, @RequestBody News updatedNews) {
+        News news = repository.findById(id).orElse(null);
+
+        if (news == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (updatedNews.getTitle() != null) {
+            news.setTitle(updatedNews.getTitle());
+        }
+
+        if (updatedNews.getDescription() != null) {
+            news.setDescription(updatedNews.getDescription());
+        }
+
+        if (updatedNews.getCoverImage() != null) {
+            news.setCoverImage(updatedNews.getCoverImage());
+        }
+
+        if (updatedNews.getContent() != null) {
+            news.setContent(updatedNews.getContent());
+        }
+
+        if (updatedNews.getSummary() != null) {
+            news.setSummary(updatedNews.getSummary());
+        }
+
+        if (updatedNews.getBody() != null) {
+            news.setBody(updatedNews.getBody());
+        }
+
+        News savedNews = repository.save(news);
+
+        return ResponseEntity.ok(savedNews);
+    }
 }
