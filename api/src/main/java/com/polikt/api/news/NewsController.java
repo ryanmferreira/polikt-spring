@@ -3,6 +3,7 @@ package com.polikt.api.news;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -12,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.polikt.api.user.User;
+import com.polikt.api.user.UserRepository;
+
 @RestController
 @RequestMapping("/news")
 public class NewsController {
@@ -19,9 +23,13 @@ public class NewsController {
     // Inject the repository
     private final NewsRepository repository;
 
+    // Inject the user repository
+    private final UserRepository userRepository;
+
     // Constructor
-    public NewsController(NewsRepository repository) {
+    public NewsController(NewsRepository repository, UserRepository userRepository) {
         this.repository = repository;
+        this.userRepository = userRepository;
     }
 
     // GET /news
@@ -44,7 +52,13 @@ public class NewsController {
 
     // POST /news
     @PostMapping
-    public News createNews(@RequestBody News news) {
+    public News createNews(@RequestBody News news, Authentication authentication) {
+        String email = authentication.getName();
+
+        User author = userRepository.findByEmail(email).orElse(null);
+
+        news.setUser(author);
+
         return repository.save(news);
     }
 

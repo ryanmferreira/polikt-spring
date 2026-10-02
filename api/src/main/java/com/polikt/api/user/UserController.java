@@ -3,6 +3,7 @@ package com.polikt.api.user;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -112,5 +113,19 @@ public class UserController {
 
         String token = jwtService.generateToken(user.getEmail());
         return ResponseEntity.ok(new LoginResponse(token));
+    }
+
+    // GET /users/me
+    @GetMapping("/me")
+    public ResponseEntity<User> getCurrentUser(Authentication authentication) {
+        String email = authentication.getName();
+
+        User user = repository.findByEmail(email).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(user);
     }
 }

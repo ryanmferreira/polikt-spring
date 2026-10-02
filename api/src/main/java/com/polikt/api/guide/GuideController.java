@@ -3,6 +3,7 @@ package com.polikt.api.guide;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -12,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.polikt.api.user.User;
+import com.polikt.api.user.UserRepository;
+
 @RestController
 @RequestMapping("/guides")
 public class GuideController {
@@ -19,8 +23,12 @@ public class GuideController {
     // Inject the repository
     private final GuideRepository repository;
 
-    public GuideController(GuideRepository repository) {
+    // Inject the user repository
+    private final UserRepository userRepository;
+
+    public GuideController(GuideRepository repository, UserRepository userRepository) {
         this.repository = repository;
+        this.userRepository = userRepository;
     }
 
     // GET /guides
@@ -43,7 +51,13 @@ public class GuideController {
 
     // POST /guides
     @PostMapping
-    public Guide createGuide(@RequestBody Guide guide) {
+    public Guide createGuide(@RequestBody Guide guide, Authentication authentication) {
+        String email = authentication.getName();
+
+        User author = userRepository.findByEmail(email).orElse(null);
+
+        guide.setUser(author);
+
         return repository.save(guide);
     }
 

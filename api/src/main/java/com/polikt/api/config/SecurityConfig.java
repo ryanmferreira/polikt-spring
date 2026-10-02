@@ -30,6 +30,9 @@ public class SecurityConfig {
             "/agencies",
             "/agencies/*",
 
+            "/users",
+            "/users/*",
+
             "/news",
             "/news/*",
 

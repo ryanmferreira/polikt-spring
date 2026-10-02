@@ -3,6 +3,7 @@ package com.polikt.api.course;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -12,15 +13,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.polikt.api.user.User;
+import com.polikt.api.user.UserRepository;
+
 @RestController
 @RequestMapping("/courses")
 public class CourseController {
 
     // Inject the repository
     private final CourseRepository repository;
+    private final UserRepository userRepository;
 
-    public CourseController(CourseRepository repository) {
+    public CourseController(CourseRepository repository, UserRepository userRepository) {
         this.repository = repository;
+        this.userRepository = userRepository;
     }
 
     // GET /courses
@@ -43,7 +49,13 @@ public class CourseController {
 
     // POST /courses
     @PostMapping
-    public Course createCourse(@RequestBody Course course) {
+    public Course createCourse(@RequestBody Course course, Authentication authentication) {
+        String email = authentication.getName();
+
+        User author = userRepository.findByEmail(email).orElse(null);
+
+        course.setUser(author);
+
         return repository.save(course);
     }
 
@@ -62,7 +74,7 @@ public class CourseController {
     @PatchMapping("/{id}")
     public ResponseEntity<Course> updateCourseById(@PathVariable Long id, @RequestBody Course updatedCourse) {
         Course course = repository.findById(id).orElse(null);
-        
+
         if (course == null) {
             return ResponseEntity.notFound().build();
         }
