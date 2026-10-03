@@ -54,7 +54,7 @@ public class GuideController {
     public Guide createGuide(@RequestBody Guide guide, Authentication authentication) {
         String email = authentication.getName();
 
-        User author = userRepository.findByEmail(email).orElse(null);
+        User author = userRepository.findByEmailIgnoreCase(email).orElse(null);
 
         guide.setUser(author);
 

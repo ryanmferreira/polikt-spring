@@ -35,7 +35,7 @@ public class NewsController {
     // GET /news
     @GetMapping
     public List<News> getAllNews() {
-        return repository.findAll();
+        return repository.findAllByOrderByCreatedAtDesc();
     }
 
     // GET /news/{id}
@@ -55,7 +55,7 @@ public class NewsController {
     public News createNews(@RequestBody News news, Authentication authentication) {
         String email = authentication.getName();
 
-        User author = userRepository.findByEmail(email).orElse(null);
+        User author = userRepository.findByEmailIgnoreCase(email).orElse(null);
 
         news.setUser(author);
 

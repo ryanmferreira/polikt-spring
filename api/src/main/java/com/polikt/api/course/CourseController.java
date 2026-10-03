@@ -52,7 +52,7 @@ public class CourseController {
     public Course createCourse(@RequestBody Course course, Authentication authentication) {
         String email = authentication.getName();
 
-        User author = userRepository.findByEmail(email).orElse(null);
+        User author = userRepository.findByEmailIgnoreCase(email).orElse(null);
 
         course.setUser(author);
 

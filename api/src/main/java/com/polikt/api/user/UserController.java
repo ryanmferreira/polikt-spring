@@ -105,7 +105,7 @@ public class UserController {
     // POST /users/auth
     @PostMapping("/auth")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        User user = repository.findByEmail(request.email()).orElse(null);
+        User user = repository.findByEmailIgnoreCase(request.email()).orElse(null);
 
         if (user == null || !passwordEncoder.matches(request.password(), user.getPassword())) {
             return ResponseEntity.status(401).build();
@@ -120,7 +120,7 @@ public class UserController {
     public ResponseEntity<User> getCurrentUser(Authentication authentication) {
         String email = authentication.getName();
 
-        User user = repository.findByEmail(email).orElse(null);
+        User user = repository.findByEmailIgnoreCase(email).orElse(null);
 
         if (user == null) {
             return ResponseEntity.notFound().build();
