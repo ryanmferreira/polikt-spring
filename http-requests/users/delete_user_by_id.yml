@@ -6,7 +6,9 @@ info:
 http:
   method: DELETE
   url: http://localhost:8080/users/2
-  auth: inherit
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyeWFubWZlcnJlaXJhQGR1Y2suY29tIiwiaWF0IjoxNzkwOTkwNDQxLCJleHAiOjE3OTE1OTUyNDF9.Hf0gno0l4TbtWERvyPaDuklvYiw0nsoW-dLFgmariyk
 
 settings:
   encodeUrl: true

@@ -179,7 +179,7 @@ Login accepts `email` and `password` and returns `{ "token": "..." }`. User crea
 curl -X POST http://localhost:8080/users/auth \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "dev.ryanmferreira@outlook.com",
+    "email": "ryanmferreira@duck.com",
     "password": "psswd@123"
   }'
 ```

@@ -1,0 +1,23 @@
+info:
+  name: Edit my user
+  type: http
+  seq: 1
+
+http:
+  method: PATCH
+  url: http://localhost:8080/users/me
+  body:
+    type: json
+    data: |-
+      {
+        "password": "psswd@123"
+      }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyeWFubWZlcnJlaXJhQGR1Y2suY29tIiwiaWF0IjoxNzkwOTkwNTUxLCJleHAiOjE3OTE1OTUzNTF9.UV5-67_L1dp1CtntMYswke8s55Slb3Usrtmq1gryZGU
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

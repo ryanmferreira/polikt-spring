@@ -24,17 +24,17 @@ public class JwtService {
     }
 
     // Generates a JWT token
-    public String generateToken(String email) {
+    public String generateToken(String id) {
         return Jwts.builder()
-                .subject(email)
+                .subject(id)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getKey())
                 .compact();
     }
 
-    // Extracts the email from the JWT token
-    public String extractEmail(String token) {
+    // Extracts the id from the JWT token
+    public String extractId(String token) {
         return Jwts.parser()
                 .verifyWith(getKey())
                 .build()

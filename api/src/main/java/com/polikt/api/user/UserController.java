@@ -128,4 +128,36 @@ public class UserController {
 
         return ResponseEntity.ok(user);
     }
+
+    // PATCH /users/me
+    @PatchMapping("/me")
+    public ResponseEntity<User> updateCurrentUser(@RequestBody User updatedUser, Authentication authentication) {
+        String email = authentication.getName();
+
+        User user = repository.findByEmailIgnoreCase(email).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (updatedUser.getName() != null) {
+            user.setName(updatedUser.getName());
+        }
+
+        if (updatedUser.getEmail() != null) {
+            user.setEmail(updatedUser.getEmail());
+        }
+
+        if (updatedUser.getPhone() != null) {
+            user.setPhone(updatedUser.getPhone());
+        }
+
+        if (updatedUser.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+        }
+
+        User savedUser = repository.save(user);
+
+        return ResponseEntity.ok(savedUser);
+    }
 }
