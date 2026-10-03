@@ -15,12 +15,12 @@
 
 </div>
 
-REST API for **Polikt** - a platform for news, guides and agencies - built with **Spring Boot**.
+REST API for **Polikt** - a platform for news, guides, courses and agencies - built with **Spring Boot**.
 
 ## Technologies
 
 - Java 26
-- Spring Boot 4.1.0
+- Spring Boot 4.1.1
 - PostgreSQL
 - Maven
 
@@ -107,10 +107,11 @@ All endpoints return JSON except `GET /`, which returns the welcome HTML. Protec
 |---|---|---|
 | `GET` | `/users` | Lists all users |
 | `GET` | `/users/{id}` | Gets one user by ID |
+| `GET` | `/users/me` | Gets the authenticated user from the JWT |
 | `POST` | `/users` | Creates a user |
-| `DELETE` | `/users/{id}` | Deletes a user by ID |
-| `PATCH` | `/users/{id}` | Partially updates a user |
 | `POST` | `/users/auth` | Authenticates a user and returns a JWT |
+| `PATCH` | `/users/{id}` | Partially updates a user |
+| `DELETE` | `/users/{id}` | Deletes a user by ID |
 
 User creation accepts `name`, `email`, `password` and the optional `phone`. The response includes `id`, `name`, `email`, `phone` and `createdAt`; `password` is write-only and is not returned.
 
@@ -138,6 +139,7 @@ Agency creation accepts the required fields `name` and `contact`.
 
 ```bash
 curl -X POST http://localhost:8080/agencies \
+  -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Prefeitura Municipal",
@@ -152,20 +154,22 @@ curl -X POST http://localhost:8080/agencies \
 | `GET` | `/news` | Lists all news |
 | `GET` | `/news/{id}` | Gets one news item by ID |
 | `POST` | `/news` | Creates a news item |
+| `PATCH` | `/news/{id}` | Partially updates a news item |
 | `DELETE` | `/news/{id}` | Deletes a news item by ID |
 
-News creation accepts the required fields `title`, `content`, `summary` and `user`, plus the optional fields `description` and `coverImage`. The `user` relation can be sent as an object containing its `id`. New items start with `upvotes` set to `0`.
+News creation accepts the required fields `title`, `content`, `summary` and `body`, plus the optional fields `description` and `coverImage`. The author (`user`) is taken automatically from the JWT, so it must not be sent in the body. New items start with `upvotes` set to `0`.
 
 ```bash
 curl -X POST http://localhost:8080/news \
+  -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{
     "title": "Camara aprova novo projeto de lei sobre transparencia",
     "description": "Proposta busca ampliar acesso a dados publicos",
     "content": "Texto completo da noticia aqui.",
     "summary": "Resumo curto da noticia.",
-    "coverImage": "https://example.com/images/capa.jpg",
-    "user": { "id": 1 }
+    "body": "Conteudo completo da noticia em Markdown.",
+    "coverImage": "https://example.com/images/capa.jpg"
 }'
 ```
 
@@ -180,7 +184,7 @@ curl -X POST http://localhost:8080/users/auth \
   }'
 ```
 
-`GET` endpoints are public. Creating and deleting agencies require authentication.
+`GET` endpoints are public. Any route that creates, updates, deletes or reads the authenticated profile requires a valid JWT.
 
 ### Courses
 
@@ -192,7 +196,7 @@ curl -X POST http://localhost:8080/users/auth \
 | `PATCH` | `/courses/{id}` | Partially updates a course |
 | `DELETE` | `/courses/{id}` | Deletes a course by ID |
 
-Course creation accepts `title`, `description`, `coverImage` and `user`, where `user` is an object containing its `id`. `PATCH` accepts any subset of `title`, `description` and `coverImage`.
+Course creation accepts `title`, `description`, `coverImage` and uses the authenticated user from the JWT. `PATCH` accepts any subset of `title`, `description` and `coverImage`.
 
 ```bash
 curl -X POST http://localhost:8080/courses \
@@ -201,8 +205,7 @@ curl -X POST http://localhost:8080/courses \
   -d '{
     "title": "Introducao a cidadania",
     "description": "Curso introdutorio",
-    "coverImage": "https://example.com/images/curso.jpg",
-    "user": { "id": 1 }
+    "coverImage": "https://example.com/images/curso.jpg"
   }'
 ```
 
@@ -239,19 +242,20 @@ Content creation accepts `content`, `coverImage` and `position`. The module is r
 | `GET` | `/guides` | Lists all guides |
 | `GET` | `/guides/{id}` | Gets one guide by ID |
 | `POST` | `/guides` | Creates a guide |
+| `PATCH` | `/guides/{id}` | Partially updates a guide |
 | `DELETE` | `/guides/{id}` | Deletes a guide by ID |
 
-Guide creation accepts the required fields `title`, `content`, `user` and `agency`, plus the optional fields `description` and `coverImage`. Both relations can be sent as objects containing their IDs.
+Guide creation accepts the required fields `title` and `content`, plus the optional `description` and `coverImage`. The author (`user`) comes from the JWT, while `agency` can be sent as an object containing its `id`.
 
 ```bash
 curl -X POST http://localhost:8080/guides \
+  -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{
     "title": "Como denunciar buracos na rua",
     "description": "Passo a passo para registrar a reclamacao",
     "content": "Conteudo completo do guia aqui.",
     "coverImage": "https://example.com/images/capa.jpg",
-    "user": { "id": 1 },
     "agency": { "id": 1 }
   }'
 ```
@@ -263,12 +267,14 @@ curl -X POST http://localhost:8080/guides \
 | `GET` | `/guides/{guideId}/steps` | Lists all steps for a guide |
 | `GET` | `/guides/{guideId}/steps/{id}` | Gets one guide step by ID |
 | `POST` | `/guides/{guideId}/steps` | Creates a guide step |
+| `PATCH` | `/guides/{guideId}/steps/{id}` | Partially updates a guide step |
 | `DELETE` | `/guides/{guideId}/steps/{id}` | Deletes a guide step by ID |
 
 Guide step creation accepts `position`, `content`, and optional `image`. The `guideId` is provided in the path and the guide itself is resolved internally.
 
 ```bash
 curl -X POST http://localhost:8080/guides/1/steps \
+  -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{
     "position": 1,
@@ -292,6 +298,7 @@ Users:
 
 Login:
 - `http-requests/login/login.yml` - `POST /users/auth`
+- `http-requests/login/get_my_user.yml` - `GET /users/me`
 
 Agencies:
 - `http-requests/agencies/get_agencies.yml` - `GET /agencies`
@@ -437,6 +444,7 @@ Courses:
 │   │       └── get_guide_steps.yml
 │   ├── login
 │   │   ├── folder.yml
+│   │   ├── get_my_user.yml
 │   │   └── login.yml
 │   ├── news
 │   │   ├── add_news.yml
