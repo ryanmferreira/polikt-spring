@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,5 +55,27 @@ public class AgencyController {
 
         repository.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // PATCH /agencies/{id}
+    @PatchMapping("/{id}")
+    public ResponseEntity<Agency> updateGuideById(@PathVariable Long id, @RequestBody Agency updatedAgency) {
+        Agency agency = repository.findById(id).orElse(null);
+
+        if (agency == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (updatedAgency.getName() != null) {
+            agency.setName(updatedAgency.getName());
+        }
+
+        if (updatedAgency.getContact() != null) {
+            agency.setContact(updatedAgency.getContact());
+        }
+
+        Agency savedGuide = repository.save(agency);
+
+        return ResponseEntity.ok(savedGuide);
     }
 }

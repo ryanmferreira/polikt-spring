@@ -1,0 +1,23 @@
+info:
+  name: Edit agency by id
+  type: http
+  seq: 1
+
+http:
+  method: PATCH
+  url: http://localhost:8080/agencies/1
+  body:
+    type: json
+    data: |-
+      {
+        "contact": "exemplo@prefeitura.exemplo.gov.br"
+      }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyeWFubWZlcnJlaXJhQGR1Y2suY29tIiwiaWF0IjoxNzkwOTkyNDYyLCJleHAiOjE3OTE1OTcyNjJ9.2pcuROlvb3qWUfBg-L1pVmkGgow3XUcniG1VZ_NR1ac
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
