@@ -5,7 +5,7 @@ info:
 
 http:
   method: DELETE
-  url: http://localhost:8080/courses/1/modules/3
+  url: http://localhost:8080/courses/1/modules/5
   auth:
     type: bearer
     token: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZXYucnlhbm1mZXJyZWlyYUBvdXRsb29rLmNvbSIsImlhdCI6MTc5MDQzMzk1NywiZXhwIjoxNzkwNTIwMzU3fQ.UYqWZ9MFyzHTTtEd1MRjLhHDhOIWjhK5I8J9bl5umzMbGuwMEZ_MAXmkVRcfOR_il9ATOJ6pE6X2dEazWRm6kA
@@ -15,4 +15,4 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
-  forwardAuthorizationHeader: false
+​
