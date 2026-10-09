@@ -13,18 +13,17 @@ http:
         "title": "Como solicitar reparos em infraestrutura urbana",
         "description": "Guia prático para identificar problemas de infraestrutura urbana e solicitar reparos aos órgãos responsáveis.",
         "content": "Aprenda como identificar problemas de infraestrutura urbana, registrar evidências e encaminhar uma solicitação aos canais oficiais da Prefeitura.",
-        "coverImage": null,
+        "coverImage": "https://blog.exati.com.br/wp-content/uploads/2021/01/infraestrutura-urbana.jpg",
         "agency": {
           "id": 1
         }
       }
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZXYucnlhbm1mZXJyZWlyYUBvdXRsb29rLmNvbSIsImlhdCI6MTc5MDQzMzk1NywiZXhwIjoxNzkwNTIwMzU3fQ.UYqWZ9MFyzHTTtEd1MRjLhHDhOIWjhK5I8J9bl5umzMbGuwMEZ_MAXmkVRcfOR_il9ATOJ6pE6X2dEazWRm6kA
+    token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtdXJpbG9AbWFpbC5jb20iLCJpYXQiOjE3OTE0NjY1MzYsImV4cCI6MTc5MjA3MTMzNn0.QbmXGEq-z8NLxNabJK45JH-jpuaH6SFH5FvjaRyy7TQ
 
 settings:
   encodeUrl: true
   timeout: 0
   followRedirects: true
   maxRedirects: 5
-  forwardAuthorizationHeader: true

@@ -35,7 +35,7 @@ public class ApiApplication {
 							--warning: #E0A93B;
 							--tag: #30264B;
 							--tag-text: #E7DEFF;
-							--radius: 12px;
+							--radius: 16px;
 							--pill: 128px;
 							--gap: 24px;
 						}

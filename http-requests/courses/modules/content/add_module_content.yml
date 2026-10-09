@@ -5,22 +5,21 @@ info:
 
 http:
   method: POST
-  url: http://localhost:8080/courses/1/modules/1/content
+  url: http://localhost:8080/courses/1/modules/4/content
   body:
     type: json
     data: |-
       {
-        "content": "Another lorem 2",
-        "coverImage": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.ictbroadcast.com%2Fwp-content%2Fuploads%2F2023%2F07%2FLinux.png&f=1&nofb=1&ipt=a720b94a0809d875583502f823efdfbe6f58ee0d8c7e850fbb27dd70eea119fe",
-        "position": 2
+        "content": "A diferença real entre voto nulo e voto branco é, em suma, apenas o meio pelo qual se escolhe não selecionar nenhum político. Em suma, então, não existe uma macro diferença entre voto nulo e branco.",
+        "coverImage": "",
+        "position": 1
       }
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZXYucnlhbm1mZXJyZWlyYUBvdXRsb29rLmNvbSIsImlhdCI6MTc5MDQ2OTI2MSwiZXhwIjoxNzkwNTU1NjYxfQ.vtlgnJv6PfIk-7-KhvWrpqRaRk7xSmpmgsMEcMnJwtCaksBt0ZoByLaBa7l5T82eZD0Lk8xQ2nKTha-31Ksa4w
+    token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtdXJpbG9AbWFpbC5jb20iLCJpYXQiOjE3OTE0NjcwMDEsImV4cCI6MTc5MjA3MTgwMX0.9102Pmk5bjwgF13gOLAcWEFeHlfpvsT6zeKPGZA-aus
 
 settings:
   encodeUrl: true
   timeout: 0
   followRedirects: true
   maxRedirects: 5
-  forwardAuthorizationHeader: false

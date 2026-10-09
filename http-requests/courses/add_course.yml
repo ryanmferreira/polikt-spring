@@ -10,13 +10,13 @@ http:
     type: json
     data: |-
       {
-        "title": "skjdahlasjkd",
-        "description": "another lorem ipsum",
-        "coverImage": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fhoanghamobile.com%2Ftin-tuc%2Fwp-content%2Fuploads%2F2023%2F10%2Flinux.jpg&f=1&nofb=1&ipt=a34a90c7957c1dcc8d695aa7d04c684d69fec7136931d12206701974bd3e7f7f"
+        "title": "Voto nulo e branco, o que é? Entenda a diferença",
+        "description": "Entenda a diferença entre o voto em branco e o voto nulo, como eles são registrados e como são considerados na apuração das eleições.",
+        "coverImage": ""
       }
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZXYucnlhbm1mZXJyZWlyYUBvdXRsb29rLmNvbSIsImlhdCI6MTc5MDk0MzQzOSwiZXhwIjoxNzkxMDI5ODM5fQ.8IXnDPNO1EdDGB49LqxbTQK1hbAYb-wHkyVP1rPDp6hfUQ6Q72u9y5UweayYAyT94AmXm3wHbA_0X2Sini3DrQ
+    token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtdXJpbG9AbWFpbC5jb20iLCJpYXQiOjE3OTE0NjcwMDEsImV4cCI6MTc5MjA3MTgwMX0.9102Pmk5bjwgF13gOLAcWEFeHlfpvsT6zeKPGZA-aus
 
 settings:
   encodeUrl: true

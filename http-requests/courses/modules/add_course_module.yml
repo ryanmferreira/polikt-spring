@@ -10,21 +10,20 @@ http:
     type: json
     data: |-
       {
-        "title": "Lorem Ipsum 2",
-        "description": "Lorem Ipsum so much",
-        "cover_image": "Lorem Ipsum 2",
-        "position": 1,
+        "title": "Conclusão",
+        "description": "",
+        "cover_image": "",
+        "position": 4,
         "course": {
           "id": 1
         }
       }
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkZXYucnlhbm1mZXJyZWlyYUBvdXRsb29rLmNvbSIsImlhdCI6MTc5MDQ2OTI2MSwiZXhwIjoxNzkwNTU1NjYxfQ.vtlgnJv6PfIk-7-KhvWrpqRaRk7xSmpmgsMEcMnJwtCaksBt0ZoByLaBa7l5T82eZD0Lk8xQ2nKTha-31Ksa4w
+    token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtdXJpbG9AbWFpbC5jb20iLCJpYXQiOjE3OTE0NjcwMDEsImV4cCI6MTc5MjA3MTgwMX0.9102Pmk5bjwgF13gOLAcWEFeHlfpvsT6zeKPGZA-aus
 
 settings:
   encodeUrl: true
   timeout: 0
   followRedirects: true
   maxRedirects: 5
-  forwardAuthorizationHeader: true

@@ -23,7 +23,7 @@ public class Content {
     @Column
     private Integer position;
 
-    @Column
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
     @Column(name = "cover_image")

@@ -13,7 +13,9 @@ http:
         "name": "Prefeitura Municipal",
         "contact": "exemplo@prefeitura.gov.br"
       }
-  auth: inherit
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtdXJpbG9AbWFpbC5jb20iLCJpYXQiOjE3OTE0NjcwMDEsImV4cCI6MTc5MjA3MTgwMX0.9102Pmk5bjwgF13gOLAcWEFeHlfpvsT6zeKPGZA-aus
 
 settings:
   encodeUrl: true
