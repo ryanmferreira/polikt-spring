@@ -2,6 +2,7 @@ package com.polikt.api.user;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -66,10 +67,15 @@ public class UserController {
 
     // POST /users
     @PostMapping
-    public User createUser(@RequestBody User user) {
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        if (user.getEmail() != null && repository.findByEmailIgnoreCase(user.getEmail()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole(User.Role.ROLE_ADMIN);
-        return repository.save(user);
+        user.setRole(User.Role.ROLE_USER);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(user));
     }
 
     // PATCH /users/{id}
@@ -86,6 +92,12 @@ public class UserController {
         }
 
         if (updatedUser.getEmail() != null) {
+            User existingUser = repository.findByEmailIgnoreCase(updatedUser.getEmail()).orElse(null);
+
+            if (existingUser != null && !existingUser.getId().equals(user.getId())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            }
+
             user.setEmail(updatedUser.getEmail());
         }
 
@@ -145,6 +157,12 @@ public class UserController {
         }
 
         if (updatedUser.getEmail() != null) {
+            User existingUser = repository.findByEmailIgnoreCase(updatedUser.getEmail()).orElse(null);
+
+            if (existingUser != null && !existingUser.getId().equals(user.getId())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            }
+
             user.setEmail(updatedUser.getEmail());
         }
 

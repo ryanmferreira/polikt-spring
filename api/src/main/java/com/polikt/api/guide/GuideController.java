@@ -2,6 +2,7 @@ package com.polikt.api.guide;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -51,14 +52,14 @@ public class GuideController {
 
     // POST /guides
     @PostMapping
-    public Guide createGuide(@RequestBody Guide guide, Authentication authentication) {
+    public ResponseEntity<Guide> createGuide(@RequestBody Guide guide, Authentication authentication) {
         String email = authentication.getName();
 
         User author = userRepository.findByEmailIgnoreCase(email).orElse(null);
 
         guide.setUser(author);
 
-        return repository.save(guide);
+        return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(guide));
     }
 
     // DELETE /guides/{id}

@@ -2,6 +2,7 @@ package com.polikt.api.course.module.content;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,27 +20,38 @@ import com.polikt.api.course.module.ModuleRepository;
 @RequestMapping("/courses/{courseId}/modules/{moduleId}/content")
 public class ContentController {
 
-    // Inject the Module repository
-    private final ModuleRepository moduleRepository;
-
     // Inject the Content repository
     private final ContentRepository repository;
 
-    public ContentController(ModuleRepository moduleRepository, ContentRepository repository) {
-        this.moduleRepository = moduleRepository;
+    // Inject the Module repository
+    private final ModuleRepository moduleRepository;
+
+    public ContentController(ContentRepository repository, ModuleRepository moduleRepository) {
         this.repository = repository;
+        this.moduleRepository = moduleRepository;
     }
 
-    // GET /modules/{moduleId}/content
+    // GET /courses/{courseId}/modules/{moduleId}/content
     @GetMapping
-    public List<Content> getAllModuleContents(@PathVariable Long moduleId) {
-        return repository.findByModuleIdOrderByPositionAsc(moduleId);
+    public ResponseEntity<List<Content>> getAllModuleContents(
+            @PathVariable Long courseId,
+            @PathVariable Long moduleId) {
+
+        if (findModuleInCourse(courseId, moduleId) == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(repository.findByModuleIdOrderByPositionAsc(moduleId));
     }
 
-    // GET /modules/{moduleId}/content/{id}
+    // GET /courses/{courseId}/modules/{moduleId}/content/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<Content> getModuleContentById(@PathVariable Long id) {
-        Content content = repository.findById(id).orElse(null);
+    public ResponseEntity<Content> getModuleContentById(
+            @PathVariable Long courseId,
+            @PathVariable Long moduleId,
+            @PathVariable Long id) {
+
+        Content content = findContentInModule(courseId, moduleId, id);
 
         if (content == null) {
             return ResponseEntity.notFound().build();
@@ -48,10 +60,14 @@ public class ContentController {
         return ResponseEntity.ok(content);
     }
 
-    // POST /modules/{moduleId}/content
+    // POST /courses/{courseId}/modules/{moduleId}/content
     @PostMapping
-    public ResponseEntity<Content> createModule(@PathVariable Long moduleId, @RequestBody Content content) {
-        Module module = moduleRepository.findById(moduleId).orElse(null);
+    public ResponseEntity<Content> createModule(
+            @PathVariable Long courseId,
+            @PathVariable Long moduleId,
+            @RequestBody Content content) {
+
+        Module module = findModuleInCourse(courseId, moduleId);
 
         if (module == null) {
             return ResponseEntity.notFound().build();
@@ -59,15 +75,19 @@ public class ContentController {
 
         content.setModule(module);
 
-        return ResponseEntity.ok(repository.save(content));
+        return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(content));
     }
 
-    // DELETE /modules/{moduleId}/content/{id}
+    // DELETE /courses/{courseId}/modules/{moduleId}/content/{id}
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteModuleContentById(@PathVariable Long moduleId, @PathVariable Long id) {
-        Content content = repository.findById(id).orElse(null);
+    public ResponseEntity<Void> deleteModuleContentById(
+            @PathVariable Long courseId,
+            @PathVariable Long moduleId,
+            @PathVariable Long id) {
 
-        if (content == null || !content.getModule().getId().equals(moduleId)) {
+        Content content = findContentInModule(courseId, moduleId, id);
+
+        if (content == null) {
             return ResponseEntity.notFound().build();
         }
 
@@ -75,29 +95,60 @@ public class ContentController {
         return ResponseEntity.noContent().build();
     }
 
-    // PATCH /modules/{moduleId}/content/{id}
+    // PATCH /courses/{courseId}/modules/{moduleId}/content/{id}
     @PatchMapping("/{id}")
-    public ResponseEntity<Content> updateContentById(@PathVariable Long moduleId, @PathVariable Long id) {
-        Content content = repository.findById(id).orElse(null);
+    public ResponseEntity<Content> updateContentById(
+            @PathVariable Long courseId,
+            @PathVariable Long moduleId,
+            @PathVariable Long id, @RequestBody Content updatedContent) {
 
-        if (content == null || !content.getModule().getId().equals(moduleId)) {
+        Content content = findContentInModule(courseId, moduleId, id);
+
+        if (content == null) {
             return ResponseEntity.notFound().build();
         }
 
-        if (content.getContent() != null) {
-            content.setContent(content.getContent());
+        if (updatedContent.getContent() != null) {
+            content.setContent(updatedContent.getContent());
         }
 
-        if (content.getCoverImage() != null) {
-            content.setCoverImage(content.getCoverImage());
+        if (updatedContent.getCoverImage() != null) {
+            content.setCoverImage(updatedContent.getCoverImage());
         }
 
-        if (content.getPosition() != null) {
-            content.setPosition(content.getPosition());
+        if (updatedContent.getPosition() != null) {
+            content.setPosition(updatedContent.getPosition());
         }
 
         Content savedContent = repository.save(content);
 
         return ResponseEntity.ok(savedContent);
+    }
+
+    // Finds a module and confirms it belongs to the course
+    private Module findModuleInCourse(Long courseId, Long moduleId) {
+        Module module = moduleRepository.findById(moduleId).orElse(null);
+
+        if (module == null || !module.getCourse().getId().equals(courseId)) {
+            return null;
+        }
+
+        return module;
+    }
+
+    // Finds a content and confirms it belongs to the module (and the module to the
+    // course)
+    private Content findContentInModule(Long courseId, Long moduleId, Long id) {
+        Content content = repository.findById(id).orElse(null);
+
+        if (content == null || findModuleInCourse(courseId, moduleId) == null) {
+            return null;
+        }
+
+        if (!content.getModule().getId().equals(moduleId)) {
+            return null;
+        }
+
+        return content;
     }
 }

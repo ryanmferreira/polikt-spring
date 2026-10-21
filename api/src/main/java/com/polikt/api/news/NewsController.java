@@ -2,6 +2,7 @@ package com.polikt.api.news;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -52,14 +53,14 @@ public class NewsController {
 
     // POST /news
     @PostMapping
-    public News createNews(@RequestBody News news, Authentication authentication) {
+    public ResponseEntity<News> createNews(@RequestBody News news, Authentication authentication) {
         String email = authentication.getName();
 
         User author = userRepository.findByEmailIgnoreCase(email).orElse(null);
 
         news.setUser(author);
 
-        return repository.save(news);
+        return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(news));
     }
 
     // DELETE /news/{id}

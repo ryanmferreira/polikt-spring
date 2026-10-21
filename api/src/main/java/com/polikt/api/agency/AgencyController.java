@@ -2,6 +2,7 @@ package com.polikt.api.agency;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,8 +43,8 @@ public class AgencyController {
 
     // POST /agencies
     @PostMapping
-    public Agency createAgency(@RequestBody Agency agency) {
-        return repository.save(agency);
+    public ResponseEntity<Agency> createAgency(@RequestBody Agency agency) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(agency));
     }
 
     // DELETE /agencies/{id}

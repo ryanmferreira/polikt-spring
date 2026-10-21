@@ -3,6 +3,7 @@ package com.polikt.api.news;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.polikt.api.user.User;
 
 import jakarta.persistence.Column;
@@ -125,7 +126,8 @@ public class News {
         this.isPublished = isPublished;
     }
 
-    public boolean getPublished() {
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    public boolean isPublished() {
         return this.isPublished;
     }
 
@@ -141,6 +143,7 @@ public class News {
         this.coverImage = coverImage;
     }
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public int getUpvotes() {
         return this.upvotes;
     }

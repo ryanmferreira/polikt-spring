@@ -33,7 +33,7 @@ REST API for **Polikt** - a platform for news, guides, courses and agencies - bu
 
 ## Technologies
 
-- Java 26
+- Java 25
 - Spring Boot 4.1.1
 - PostgreSQL
 - Maven
@@ -53,13 +53,13 @@ Test dependencies:
 
 ## Prerequisites
 
-- JDK 26+
+- JDK 25+
 - Maven (or use the `./mvnw` wrapper)
 - PostgreSQL database running
 
 ## Configuration
 
-The application is configured through environment variables. In development, all of them are optional because they have default values. In production, you **must** set them all, especially `JWT_SECRET`, which has no default.
+The application is configured through environment variables. In development, all of them are optional because they have default values. In production, you **must** set the database variables.
 
 | Variable | Description | Default (development) |
 |---|---|---|
@@ -67,7 +67,6 @@ The application is configured through environment variables. In development, all
 | `DB_USERNAME` | Database user | `postgres` |
 | `DB_PASSWORD` | Database password | `postgres` |
 | `PORT` | HTTP port | `8080` |
-| `JWT_SECRET` | HMAC key used to sign the tokens | none (required) |
 
 Application configuration is done in:
 
@@ -85,11 +84,11 @@ server.port=${PORT:8080}
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 
-jwt.secret=${JWT_SECRET}
+jwt.secret=is_dangerous_to_go_alone_take_this
 jwt.expiration=604800000
 ```
 
-> `jwt.secret` is the HMAC key used to sign the tokens. Use a long, random value and never commit it to the repository. `jwt.expiration` is the token lifetime in milliseconds (`604800000` = 7 days).
+> `jwt.secret` is the HMAC key used to sign the tokens. The value above is a development default committed to the repository: replace it with a long, random value before deploying. `jwt.expiration` is the token lifetime in milliseconds (`604800000` = 7 days).
 
 > `ddl-auto=update` creates/updates tables automatically from the JPA entities, and `show-sql=true` prints every query to the log. Both are convenient in development, but **should not be used in production**.
 
@@ -104,7 +103,6 @@ export DB_URL="jdbc:postgresql://<url>/<db_name>?sslmode=require"
 export DB_USERNAME="user_name"
 export DB_PASSWORD="user_password"
 export PORT="8080"
-export JWT_SECRET="a_long_random_secret"
 ```
 
 On Windows:
@@ -114,7 +112,6 @@ set DB_URL=jdbc:postgresql://<url>/<db_name>?sslmode=require
 set DB_USERNAME=user_name
 set DB_PASSWORD=user_password
 set PORT=8080
-set JWT_SECRET=a_long_random_secret
 ```
 
 ## Running
@@ -138,7 +135,6 @@ docker run -p 8080:8080 \
   -e DB_URL="jdbc:postgresql://<host>:5432/<db_name>" \
   -e DB_USERNAME="user_name" \
   -e DB_PASSWORD="user_password" \
-  -e JWT_SECRET="a_long_random_secret" \
   polikt-api
 ```
 
@@ -171,7 +167,7 @@ Authorization: Bearer <token>
 
 Notes:
 
-- The token identifies the user by their `id`, not by their e-mail. Because of this, **changing the e-mail does not invalidate the token**.
+- The token identifies the user by their e-mail (the `sub` claim). Because of this, **changing the e-mail invalidates the token**: requests made with the old token can no longer find the user.
 - Tokens expire after the time set in `jwt.expiration` (7 days by default).
 
 ### Access rules
@@ -186,7 +182,7 @@ Notes:
 
 ## Endpoints
 
-All endpoints return JSON except `GET /`, which returns the welcome HTML. For `GET /{id}` and `DELETE /{id}` endpoints, a missing resource returns `404 Not Found`, and a successful deletion returns `204 No Content`.
+All endpoints return JSON except `GET /`, which returns the welcome HTML. For `GET /{id}` and `DELETE /{id}` endpoints, a missing resource returns `404 Not Found`, and a successful deletion returns `204 No Content`. Successful creations return `201 Created`.
 
 ### Root
 
@@ -207,7 +203,7 @@ All endpoints return JSON except `GET /`, which returns the welcome HTML. For `G
 | `PATCH` | `/users/me` | Yes | Partially updates the authenticated user |
 | `DELETE` | `/users/{id}` | Yes | Deletes a user by ID |
 
-User creation accepts `name`, `email`, `password` and the optional `phone`. The response includes `id`, `name`, `email`, `phone` and `createdAt`; `password` is write-only and is never returned.
+User creation accepts `name`, `email`, `password` and the optional `phone`. The response includes `id`, `name`, `email`, `phone` and `createdAt`; `password` is write-only and is never returned. New users are created with `ROLE_USER`.
 
 `PATCH /users/{id}` and `PATCH /users/me` accept any subset of `name`, `email`, `password` and `phone`. If the new e-mail already belongs to another user, the API returns `409 Conflict`.
 
@@ -239,9 +235,10 @@ curl -X PATCH http://localhost:8080/users/me \
 | `GET` | `/agencies` | No | Lists all agencies |
 | `GET` | `/agencies/{id}` | No | Gets one agency by ID |
 | `POST` | `/agencies` | Yes | Creates an agency |
+| `PATCH` | `/agencies/{id}` | Yes | Partially updates an agency |
 | `DELETE` | `/agencies/{id}` | Yes | Deletes an agency by ID |
 
-Agency creation accepts the required fields `name` and `contact`.
+Agency creation accepts the required fields `name` and `contact`. `PATCH` accepts any subset of `name` and `contact`.
 
 ```bash
 curl -X POST http://localhost:8080/agencies \
@@ -401,8 +398,9 @@ curl -X POST http://localhost:8080/guides/1/steps \
 
 | Status | Meaning |
 |---|---|
+| `201 Created` | Resource created successfully |
 | `204 No Content` | Resource deleted successfully |
-| `400 Bad Request` | Malformed JSON or invalid/missing fields |
+| `400 Bad Request` | Malformed JSON or a field with the wrong type |
 | `401 Unauthorized` | Missing, invalid or expired token, or wrong login credentials |
 | `403 Forbidden` | Authenticated, but not allowed to perform the action |
 | `404 Not Found` | The requested resource does not exist |
@@ -415,7 +413,7 @@ The Bruno collection is available in `http-requests/`:
 Users:
 - `http-requests/users/get_users.yml` - `GET /users`
 - `http-requests/users/add_user.yml` - `POST /users`
-- `http-requests/users/get_user_by_id.yml` - `GET /users/{id}`
+- `http-requests/users/add_user_by_id.yml` - `GET /users/{id}`
 - `http-requests/users/delete_user_by_id.yml` - `DELETE /users/{id}`
 - `http-requests/users/update_user_by_id.yml` - `PATCH /users/{id}`
 
@@ -428,6 +426,7 @@ Agencies:
 - `http-requests/agencies/get_agencies.yml` - `GET /agencies`
 - `http-requests/agencies/get_agency_by_id.yml` - `GET /agencies/{id}`
 - `http-requests/agencies/add_agency.yml` - `POST /agencies`
+- `http-requests/agencies/edit_agency_by_id.yml` - `PATCH /agencies/{id}`
 - `http-requests/agencies/delete_agency_by_id.yml` - `DELETE /agencies/{id}`
 
 News:

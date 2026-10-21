@@ -2,6 +2,7 @@ package com.polikt.api.guide.step;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -59,7 +60,7 @@ public class GuideStepController {
 
         step.setGuide(guide);
 
-        return ResponseEntity.ok(repository.save(step));
+        return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(step));
     }
 
     // DELETE /guides/{guideId}/steps/{id}
@@ -77,10 +78,14 @@ public class GuideStepController {
 
     // PATCH /guides/{guideId}/steps/{id}
     @PatchMapping("/{id}")
-    public ResponseEntity<GuideStep> updateCourseById(@PathVariable Long id, @RequestBody GuideStep updatedStep) {
+    public ResponseEntity<GuideStep> updateCourseById(
+            @PathVariable Long guideId,
+            @PathVariable Long id,
+            @RequestBody GuideStep updatedStep) {
+
         GuideStep step = repository.findById(id).orElse(null);
 
-        if (step == null) {
+        if (step == null || !step.getGuide().getId().equals(guideId)) {
             return ResponseEntity.notFound().build();
         }
 

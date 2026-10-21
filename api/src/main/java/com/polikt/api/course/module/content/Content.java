@@ -20,7 +20,7 @@ public class Content {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private Integer position;
 
     @Column(nullable = false, columnDefinition = "TEXT")

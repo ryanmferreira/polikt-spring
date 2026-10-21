@@ -2,6 +2,7 @@ package com.polikt.api.course;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -49,14 +50,14 @@ public class CourseController {
 
     // POST /courses
     @PostMapping
-    public Course createCourse(@RequestBody Course course, Authentication authentication) {
+    public ResponseEntity<Course> createCourse(@RequestBody Course course, Authentication authentication) {
         String email = authentication.getName();
 
         User author = userRepository.findByEmailIgnoreCase(email).orElse(null);
 
         course.setUser(author);
 
-        return repository.save(course);
+        return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(course));
     }
 
     // DELETE /courses/{id}
