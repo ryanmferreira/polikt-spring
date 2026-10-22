@@ -1,6 +1,7 @@
 package com.polikt.api.news;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,9 +66,15 @@ public class NewsController {
 
     // DELETE /news/{id}
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteNewsById(@PathVariable Long id) {
-        if (!repository.existsById(id)) {
+    public ResponseEntity<?> deleteNewsById(@PathVariable Long id, Authentication authentication) {
+        News news = repository.findById(id).orElse(null);
+
+        if (news == null) {
             return ResponseEntity.notFound().build();
+        }
+
+        if (!news.getUser().getEmail().equalsIgnoreCase(authentication.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "Access denied."));
         }
 
         repository.deleteById(id);
@@ -76,11 +83,16 @@ public class NewsController {
 
     // PUT /news/{id}
     @PatchMapping("/{id}")
-    public ResponseEntity<News> updateCourseById(@PathVariable Long id, @RequestBody News updatedNews) {
+    public ResponseEntity<?> updateCourseById(@PathVariable Long id, @RequestBody News updatedNews,
+            Authentication authentication) {
         News news = repository.findById(id).orElse(null);
 
         if (news == null) {
             return ResponseEntity.notFound().build();
+        }
+
+        if (!news.getUser().getEmail().equalsIgnoreCase(authentication.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "Access denied."));
         }
 
         if (updatedNews.getTitle() != null) {

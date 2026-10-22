@@ -1,9 +1,11 @@
 package com.polikt.api.guide.step;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -51,11 +53,16 @@ public class GuideStepController {
 
     // POST /guides/{guideId}/steps
     @PostMapping
-    public ResponseEntity<GuideStep> createStep(@PathVariable Long guideId, @RequestBody GuideStep step) {
+    public ResponseEntity<?> createStep(@PathVariable Long guideId, @RequestBody GuideStep step,
+            Authentication authentication) {
         Guide guide = guideRepository.findById(guideId).orElse(null);
 
         if (guide == null) {
             return ResponseEntity.notFound().build();
+        }
+
+        if (!guide.getUser().getEmail().equalsIgnoreCase(authentication.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "Access denied."));
         }
 
         step.setGuide(guide);
@@ -65,11 +72,16 @@ public class GuideStepController {
 
     // DELETE /guides/{guideId}/steps/{id}
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteStepById(@PathVariable Long guideId, @PathVariable Long id) {
+    public ResponseEntity<?> deleteStepById(@PathVariable Long guideId, @PathVariable Long id,
+            Authentication authentication) {
         GuideStep step = repository.findById(id).orElse(null);
 
         if (step == null || !step.getGuide().getId().equals(guideId)) {
             return ResponseEntity.notFound().build();
+        }
+
+        if (!step.getGuide().getUser().getEmail().equalsIgnoreCase(authentication.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "Access denied."));
         }
 
         repository.deleteById(id);
@@ -78,15 +90,20 @@ public class GuideStepController {
 
     // PATCH /guides/{guideId}/steps/{id}
     @PatchMapping("/{id}")
-    public ResponseEntity<GuideStep> updateCourseById(
+    public ResponseEntity<?> updateCourseById(
             @PathVariable Long guideId,
             @PathVariable Long id,
-            @RequestBody GuideStep updatedStep) {
+            @RequestBody GuideStep updatedStep,
+            Authentication authentication) {
 
         GuideStep step = repository.findById(id).orElse(null);
 
         if (step == null || !step.getGuide().getId().equals(guideId)) {
             return ResponseEntity.notFound().build();
+        }
+
+        if (!step.getGuide().getUser().getEmail().equalsIgnoreCase(authentication.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "Access denied."));
         }
 
         if (updatedStep.getPosition() != null) {

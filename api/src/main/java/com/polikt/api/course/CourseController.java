@@ -1,6 +1,7 @@
 package com.polikt.api.course;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,9 +63,15 @@ public class CourseController {
 
     // DELETE /courses/{id}
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCourseById(@PathVariable Long id) {
-        if (!repository.existsById(id)) {
+    public ResponseEntity<?> deleteCourseById(@PathVariable Long id, Authentication authentication) {
+        Course course = repository.findById(id).orElse(null);
+
+        if (course == null) {
             return ResponseEntity.notFound().build();
+        }
+
+        if (!course.getUser().getEmail().equalsIgnoreCase(authentication.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "Access denied."));
         }
 
         repository.deleteById(id);
@@ -73,11 +80,16 @@ public class CourseController {
 
     // PATCH /courses/{id}
     @PatchMapping("/{id}")
-    public ResponseEntity<Course> updateCourseById(@PathVariable Long id, @RequestBody Course updatedCourse) {
+    public ResponseEntity<?> updateCourseById(@PathVariable Long id, @RequestBody Course updatedCourse,
+            Authentication authentication) {
         Course course = repository.findById(id).orElse(null);
 
         if (course == null) {
             return ResponseEntity.notFound().build();
+        }
+
+        if (!course.getUser().getEmail().equalsIgnoreCase(authentication.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "Access denied."));
         }
 
         if (updatedCourse.getTitle() != null) {

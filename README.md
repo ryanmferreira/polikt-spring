@@ -178,7 +178,9 @@ Notes:
 | `POST /users` (sign up) and `POST /users/auth` (login) | Public |
 | All other `GET` endpoints, except `GET /users/me` | Public |
 | `GET /users/me` and `PATCH /users/me` | Authenticated |
-| Any `POST`, `PATCH` or `DELETE` not listed above | Authenticated |
+| Any `POST`, `PATCH` or `DELETE` not listed above | Authenticated + owner |
+
+Authenticated `POST`, `PATCH` and `DELETE` requests can only change resources owned by the authenticated user (news, courses, guides and their nested resources). Trying to change someone else's resource returns `403 Forbidden`. `PATCH` and `DELETE` on `/users/{id}` are restricted to the user's own account. `Agencies` have no owner, so any authenticated user can change them.
 
 ## Endpoints
 
@@ -203,9 +205,13 @@ All endpoints return JSON except `GET /`, which returns the welcome HTML. For `G
 | `PATCH` | `/users/me` | Yes | Partially updates the authenticated user |
 | `DELETE` | `/users/{id}` | Yes | Deletes a user by ID |
 
-User creation accepts `name`, `email`, `password` and the optional `phone`. The response includes `id`, `name`, `email`, `phone` and `createdAt`; `password` is write-only and is never returned. New users are created with `ROLE_USER`.
+User creation accepts the required fields `name`, `email` and `password`, plus the optional `phone`. The response includes `id`, `name`, `email`, `phone` and `createdAt`; `password` is write-only and is never returned. New users are created with `ROLE_USER`.
 
-`PATCH /users/{id}` and `PATCH /users/me` accept any subset of `name`, `email`, `password` and `phone`. If the new e-mail already belongs to another user, the API returns `409 Conflict`.
+`PATCH /users/{id}` and `PATCH /users/me` accept any subset of `name`, `email`, `password` and `phone`. If the new e-mail or phone already belongs to another user, the API returns `409 Conflict`.
+
+`POST /users/auth` returns `401 Unauthorized` when the e-mail is not found or the password does not match.
+
+`PATCH /users/{id}` and `DELETE /users/{id}` only work on the authenticated user's own account; any other id returns `403 Forbidden`.
 
 ```bash
 curl -X POST http://localhost:8080/users \
@@ -396,15 +402,21 @@ curl -X POST http://localhost:8080/guides/1/steps \
 
 ## Error responses
 
+Error responses that need extra context return a JSON body with a `message` field:
+
+```json
+{ "message": "Email already registered." }
+```
+
 | Status | Meaning |
 |---|---|
 | `201 Created` | Resource created successfully |
 | `204 No Content` | Resource deleted successfully |
-| `400 Bad Request` | Malformed JSON or a field with the wrong type |
-| `401 Unauthorized` | Missing, invalid or expired token, or wrong login credentials |
-| `403 Forbidden` | Authenticated, but not allowed to perform the action |
+| `400 Bad Request` | Malformed JSON, a field with the wrong type, or a missing required field (`{"message": "Name, email and password are required."}`) |
+| `401 Unauthorized` | Missing, invalid or expired token, or wrong login credentials (`{"message": "Invalid email or password."}`) |
+| `403 Forbidden` | Authenticated, but trying to change a resource that belongs to another user (`{"message": "Access denied."}`) |
 | `404 Not Found` | The requested resource does not exist |
-| `409 Conflict` | The value is already in use (e.g. duplicate e-mail) |
+| `409 Conflict` | The value is already in use (`{"message": "Email already registered."}` or `{"message": "Phone already registered."}`) |
 
 ## Testing with Bruno
 

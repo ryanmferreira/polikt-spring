@@ -1,9 +1,11 @@
 package com.polikt.api.course.module.content;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -62,15 +64,20 @@ public class ContentController {
 
     // POST /courses/{courseId}/modules/{moduleId}/content
     @PostMapping
-    public ResponseEntity<Content> createModule(
+    public ResponseEntity<?> createModule(
             @PathVariable Long courseId,
             @PathVariable Long moduleId,
-            @RequestBody Content content) {
+            @RequestBody Content content,
+            Authentication authentication) {
 
         Module module = findModuleInCourse(courseId, moduleId);
 
         if (module == null) {
             return ResponseEntity.notFound().build();
+        }
+
+        if (!module.getCourse().getUser().getEmail().equalsIgnoreCase(authentication.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "Access denied."));
         }
 
         content.setModule(module);
@@ -80,15 +87,20 @@ public class ContentController {
 
     // DELETE /courses/{courseId}/modules/{moduleId}/content/{id}
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteModuleContentById(
+    public ResponseEntity<?> deleteModuleContentById(
             @PathVariable Long courseId,
             @PathVariable Long moduleId,
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            Authentication authentication) {
 
         Content content = findContentInModule(courseId, moduleId, id);
 
         if (content == null) {
             return ResponseEntity.notFound().build();
+        }
+
+        if (!content.getModule().getCourse().getUser().getEmail().equalsIgnoreCase(authentication.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "Access denied."));
         }
 
         repository.deleteById(id);
@@ -97,15 +109,20 @@ public class ContentController {
 
     // PATCH /courses/{courseId}/modules/{moduleId}/content/{id}
     @PatchMapping("/{id}")
-    public ResponseEntity<Content> updateContentById(
+    public ResponseEntity<?> updateContentById(
             @PathVariable Long courseId,
             @PathVariable Long moduleId,
-            @PathVariable Long id, @RequestBody Content updatedContent) {
+            @PathVariable Long id, @RequestBody Content updatedContent,
+            Authentication authentication) {
 
         Content content = findContentInModule(courseId, moduleId, id);
 
         if (content == null) {
             return ResponseEntity.notFound().build();
+        }
+
+        if (!content.getModule().getCourse().getUser().getEmail().equalsIgnoreCase(authentication.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "Access denied."));
         }
 
         if (updatedContent.getContent() != null) {

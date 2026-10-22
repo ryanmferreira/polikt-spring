@@ -1,6 +1,7 @@
 package com.polikt.api.guide;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -64,9 +65,15 @@ public class GuideController {
 
     // DELETE /guides/{id}
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGuideById(@PathVariable Long id) {
-        if (!repository.existsById(id)) {
+    public ResponseEntity<?> deleteGuideById(@PathVariable Long id, Authentication authentication) {
+        Guide guide = repository.findById(id).orElse(null);
+
+        if (guide == null) {
             return ResponseEntity.notFound().build();
+        }
+
+        if (!guide.getUser().getEmail().equalsIgnoreCase(authentication.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "Access denied."));
         }
 
         repository.deleteById(id);
@@ -75,11 +82,16 @@ public class GuideController {
 
     // PATCH /guides/{id}
     @PatchMapping("/{id}")
-    public ResponseEntity<Guide> updateGuideById(@PathVariable Long id, @RequestBody Guide updatedGuide) {
+    public ResponseEntity<?> updateGuideById(@PathVariable Long id, @RequestBody Guide updatedGuide,
+            Authentication authentication) {
         Guide guide = repository.findById(id).orElse(null);
 
         if (guide == null) {
             return ResponseEntity.notFound().build();
+        }
+
+        if (!guide.getUser().getEmail().equalsIgnoreCase(authentication.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "Access denied."));
         }
 
         if (updatedGuide.getTitle() != null) {

@@ -1,6 +1,7 @@
 package com.polikt.api.user;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,9 +57,15 @@ public class UserController {
 
     // Delete /users/{id}
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUserById(@PathVariable Long id) {
-        if (!repository.existsById(id)) {
+    public ResponseEntity<?> deleteUserById(@PathVariable Long id, Authentication authentication) {
+        User user = repository.findById(id).orElse(null);
+
+        if (user == null) {
             return ResponseEntity.notFound().build();
+        }
+
+        if (!user.getEmail().equalsIgnoreCase(authentication.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "Access denied."));
         }
 
         repository.deleteById(id);
@@ -67,9 +74,19 @@ public class UserController {
 
     // POST /users
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        if (user.getEmail() != null && repository.findByEmailIgnoreCase(user.getEmail()).isPresent()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    public ResponseEntity<?> createUser(@RequestBody User user) {
+        if (user.getName() == null || user.getName().isBlank()
+                || user.getEmail() == null || user.getEmail().isBlank()
+                || user.getPassword() == null || user.getPassword().isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Name, email and password are required."));
+        }
+
+        if (repository.findByEmailIgnoreCase(user.getEmail()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "Email already registered."));
+        }
+
+        if (user.getPhone() != null && repository.findByPhone(user.getPhone()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "Phone already registered."));
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -80,11 +97,16 @@ public class UserController {
 
     // PATCH /users/{id}
     @PatchMapping("/{id}")
-    public ResponseEntity<User> updateUserById(@PathVariable Long id, @RequestBody User updatedUser) {
+    public ResponseEntity<?> updateUserById(@PathVariable Long id, @RequestBody User updatedUser,
+            Authentication authentication) {
         User user = repository.findById(id).orElse(null);
 
         if (user == null) {
             return ResponseEntity.notFound().build();
+        }
+
+        if (!user.getEmail().equalsIgnoreCase(authentication.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "Access denied."));
         }
 
         if (updatedUser.getName() != null) {
@@ -95,13 +117,19 @@ public class UserController {
             User existingUser = repository.findByEmailIgnoreCase(updatedUser.getEmail()).orElse(null);
 
             if (existingUser != null && !existingUser.getId().equals(user.getId())) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "Email already registered."));
             }
 
             user.setEmail(updatedUser.getEmail());
         }
 
         if (updatedUser.getPhone() != null) {
+            User existingUser = repository.findByPhone(updatedUser.getPhone()).orElse(null);
+
+            if (existingUser != null && !existingUser.getId().equals(user.getId())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "Phone already registered."));
+            }
+
             user.setPhone(updatedUser.getPhone());
         }
 
@@ -117,10 +145,11 @@ public class UserController {
     // POST /users/auth
     @PostMapping("/auth")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        User user = repository.findByEmailIgnoreCase(request.email()).orElse(null);
+        User user = request.email() == null ? null : repository.findByEmailIgnoreCase(request.email()).orElse(null);
 
-        if (user == null || !passwordEncoder.matches(request.password(), user.getPassword())) {
-            return ResponseEntity.status(401).build();
+        if (user == null || request.password() == null
+                || !passwordEncoder.matches(request.password(), user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Invalid email or password."));
         }
 
         String token = jwtService.generateToken(user.getEmail());
@@ -143,7 +172,7 @@ public class UserController {
 
     // PATCH /users/me
     @PatchMapping("/me")
-    public ResponseEntity<User> updateCurrentUser(@RequestBody User updatedUser, Authentication authentication) {
+    public ResponseEntity<?> updateCurrentUser(@RequestBody User updatedUser, Authentication authentication) {
         String email = authentication.getName();
 
         User user = repository.findByEmailIgnoreCase(email).orElse(null);
@@ -160,13 +189,19 @@ public class UserController {
             User existingUser = repository.findByEmailIgnoreCase(updatedUser.getEmail()).orElse(null);
 
             if (existingUser != null && !existingUser.getId().equals(user.getId())) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "Email already registered."));
             }
 
             user.setEmail(updatedUser.getEmail());
         }
 
         if (updatedUser.getPhone() != null) {
+            User existingUser = repository.findByPhone(updatedUser.getPhone()).orElse(null);
+
+            if (existingUser != null && !existingUser.getId().equals(user.getId())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "Phone already registered."));
+            }
+
             user.setPhone(updatedUser.getPhone());
         }
 
